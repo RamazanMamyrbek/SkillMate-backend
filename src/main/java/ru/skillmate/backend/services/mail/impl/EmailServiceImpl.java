@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -44,10 +45,12 @@ public class EmailServiceImpl implements EmailService {
         String process = templateEngine.process(templateName, context);
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+        ClassPathResource logo = new ClassPathResource("static/images/logo.png");
         mimeMessageHelper.setFrom("noreply@skillmate.com");
         mimeMessageHelper.setTo(toEmail);
         mimeMessageHelper.setSubject(subject);
         mimeMessageHelper.setText(process, true);
+        mimeMessageHelper.addInline("logo", logo);
         javaMailSender.send(mimeMessageHelper.getMimeMessage());
     }
 
