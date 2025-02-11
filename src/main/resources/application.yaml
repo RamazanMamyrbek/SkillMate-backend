@@ -12,11 +12,16 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: 210103040@stu.sdu.edu.kz
-    password: kwlr ynsa fgib pyyt
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
           auth: true
           starttls:
             enable: true
+
+jwt:
+  secret: ${JWT_SECRET:the_biggest_secret_of_app_is_jwt_secret}
+  accessExpiration: 3600000
+  refreshExpiration: 604800000

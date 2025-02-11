@@ -1,4 +1,4 @@
-package ru.skillmate.backend.exceptions;
+package ru.skillmate.backend.exceptions.handler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
+import ru.skillmate.backend.exceptions.InvalidConfirmationCodeException;
+import ru.skillmate.backend.exceptions.LoginFailedException;
+import ru.skillmate.backend.exceptions.ResourceAlreadyTakenException;
+import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -89,5 +93,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
+    }
+
+    @ExceptionHandler(LoginFailedException.class)
+    public ResponseEntity<ErrorResponseDto> handleLoginFailedException(LoginFailedException ex, WebRequest webRequest) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.UNAUTHORIZED,
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponseDto);
     }
 }
