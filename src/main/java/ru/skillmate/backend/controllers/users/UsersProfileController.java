@@ -55,7 +55,7 @@ public class UsersProfileController {
         return ResponseEntity.ok().body(responseDto);
     }
 
-    @PatchMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PatchMapping(value = "/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Edit profile image"
     )
