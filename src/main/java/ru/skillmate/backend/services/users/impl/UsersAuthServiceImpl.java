@@ -13,7 +13,7 @@ import ru.skillmate.backend.dto.users.request.ConfirmEmailRequestDto;
 import ru.skillmate.backend.dto.users.request.PendingUserRequestDto;
 import ru.skillmate.backend.dto.users.request.UserLoginRequestDto;
 import ru.skillmate.backend.dto.users.response.PendingUserResponseDto;
-import ru.skillmate.backend.dto.users.response.UserResponseDto;
+import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.entities.users.PendingUser;
 import ru.skillmate.backend.entities.users.Users;
 import ru.skillmate.backend.exceptions.InvalidConfirmationCodeException;
@@ -60,7 +60,7 @@ public class UsersAuthServiceImpl implements UsersAuthService {
 
     @Override
     @Transactional
-    public UserResponseDto login(UserLoginRequestDto userLoginRequestDto, HttpServletResponse response) {
+    public UserProfileResponseDto login(UserLoginRequestDto userLoginRequestDto, HttpServletResponse response) {
         try{
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(userLoginRequestDto.email(), userLoginRequestDto.password()));
         } catch (Exception ex) {
@@ -76,7 +76,7 @@ public class UsersAuthServiceImpl implements UsersAuthService {
 
     @Override
     @Transactional
-    public UserResponseDto confirmEmail(ConfirmEmailRequestDto requestDto) {
+    public UserProfileResponseDto confirmEmail(ConfirmEmailRequestDto requestDto) {
         PendingUser pendingUser = usersService.getPendingUserByEmail(requestDto.email());
         if(!pendingUser.getEmailConfirmationCode().equals(requestDto.code())) {
             throw new InvalidConfirmationCodeException();

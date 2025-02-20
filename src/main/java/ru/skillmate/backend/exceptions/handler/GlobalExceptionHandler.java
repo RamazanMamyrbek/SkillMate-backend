@@ -13,10 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
-import ru.skillmate.backend.exceptions.InvalidConfirmationCodeException;
-import ru.skillmate.backend.exceptions.LoginFailedException;
-import ru.skillmate.backend.exceptions.ResourceAlreadyTakenException;
-import ru.skillmate.backend.exceptions.ResourceNotFoundException;
+import ru.skillmate.backend.exceptions.*;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -104,5 +101,16 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 LocalDateTime.now()
         );
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponseDto);
+    }
+
+    @ExceptionHandler(MinioFileException.class)
+    public ResponseEntity<ErrorResponseDto> handleMinioFileException(MinioFileException ex, WebRequest webRequest) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponseDto);
     }
 }

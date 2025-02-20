@@ -23,4 +23,8 @@ public class ResourceNotFoundException extends RuntimeException{
     public static UsernameNotFoundException throwUsernameNotFoundException(String email) {
         return new UsernameNotFoundException("User with email %s was not found".formatted(email));
     }
+
+    public static ResourceNotFoundException resourceNotFoundById(Long resourceId) {
+        return new ResourceNotFoundException("Resource with id %s was not found".formatted(resourceId));
+    }
 }

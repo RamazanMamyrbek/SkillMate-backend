@@ -15,7 +15,7 @@ import ru.skillmate.backend.dto.users.request.ConfirmEmailRequestDto;
 import ru.skillmate.backend.dto.users.request.PendingUserRequestDto;
 import ru.skillmate.backend.dto.users.request.UserLoginRequestDto;
 import ru.skillmate.backend.dto.users.response.PendingUserResponseDto;
-import ru.skillmate.backend.dto.users.response.UserResponseDto;
+import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.services.users.UsersAuthService;
 
 import java.util.Map;
@@ -37,8 +37,8 @@ public class UsersAuthController {
 
     @PostMapping("/confirm-email")
     @Operation(summary = "Endpoint to confirm email via code")
-    public ResponseEntity<UserResponseDto> confirmEmail(@RequestBody @Valid ConfirmEmailRequestDto requestDto) {
-        UserResponseDto responseDto = userAuthService.confirmEmail(requestDto);
+    public ResponseEntity<UserProfileResponseDto> confirmEmail(@RequestBody @Valid ConfirmEmailRequestDto requestDto) {
+        UserProfileResponseDto responseDto = userAuthService.confirmEmail(requestDto);
         return ResponseEntity.status(HttpStatus.OK).body(responseDto);
     }
 
@@ -51,13 +51,13 @@ public class UsersAuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Endpoint to make a login request")
-    public ResponseEntity<UserResponseDto> login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto, HttpServletResponse response) {
-        UserResponseDto userResponseDto = userAuthService.login(userLoginRequestDto, response);
-        return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+    public ResponseEntity<UserProfileResponseDto> login(@RequestBody @Valid UserLoginRequestDto userLoginRequestDto, HttpServletResponse response) {
+        UserProfileResponseDto userProfileResponseDto = userAuthService.login(userLoginRequestDto, response);
+        return ResponseEntity.status(HttpStatus.OK).body(userProfileResponseDto);
     }
 
     @GetMapping("/logout")
-    @Operation(summary = "Endpoint to logout by anulling tokens")
+    @Operation(summary = "Endpoint to logout by annulling tokens")
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         userAuthService.logout(response);
         return ResponseEntity.noContent().build();

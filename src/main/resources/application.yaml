@@ -1,3 +1,4 @@
+#Spring config
 spring:
   application:
     name: skillmate-backend
@@ -9,6 +10,9 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
   mail:
     host: smtp.gmail.com
     port: 587
@@ -20,8 +24,22 @@ spring:
           auth: true
           starttls:
             enable: true
+  servlet:
+    multipart:
+      max-request-size: 200MB
+      max-file-size: 200MB
 
+# JWT config
 jwt:
   secret: ${JWT_SECRET:the_biggest_secret_of_app_is_jwt_secret}
   accessExpiration: 3600000
   refreshExpiration: 604800000
+
+# Minio config
+minio:
+  url: http://localhost:9000
+  accessKey: minioadmin
+  secretKey: minioadmin
+  bucketName: projectbucket
+  folders:
+    profileImages: profile_images

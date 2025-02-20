@@ -1,6 +1,9 @@
 package ru.skillmate.backend.services.users;
 
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.users.request.ProfileEditRequestDto;
+import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.entities.users.PendingUser;
 import ru.skillmate.backend.entities.users.Users;
 
@@ -21,4 +24,10 @@ public interface UsersService {
     boolean isPendingEmailUnique(String email);
 
     boolean isEmailUnique(String email);
+
+    UserProfileResponseDto getProfileInfo(String email);
+
+    UserProfileResponseDto editProfile(String email, ProfileEditRequestDto profileEditRequestDto);
+
+    UserProfileResponseDto editProfileImage(String email, MultipartFile image);
 }

@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skillmate.backend.entities.BaseEntity;
+import ru.skillmate.backend.entities.resources.Resource;
 
 import java.util.Collection;
 
@@ -27,12 +28,25 @@ public class Users extends BaseEntity implements UserDetails {
 
     @Column(name = "email", unique = true, nullable = false)
     private String email;
-
+    @Column(name = "nickname", unique = true, nullable = false)
+    private String nickname;
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
     @Column(name = "country", nullable = false)
     private String country;
+
+    @Builder.Default
+    @Enumerated(EnumType.STRING)
+    @Column(name = "gender", nullable = false)
+    private Gender gender = Gender.UNDEFINED;
+
+    @Column(name = "city")
+    private String city;
+
+    @OneToOne
+    @JoinColumn(name = "image_resource_id", referencedColumnName = "id")
+    private Resource imageResource;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
