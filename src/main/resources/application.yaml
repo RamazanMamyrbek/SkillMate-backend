@@ -41,5 +41,8 @@ minio:
   accessKey: minioadmin
   secretKey: minioadmin
   bucketName: projectbucket
+  allowedTypes:
+    allowedAchievementTypes: image/png,image/jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword
   folders:
     profileImages: profile_images
+    skillAchievements: skill_achievements

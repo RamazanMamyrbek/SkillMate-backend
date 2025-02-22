@@ -6,8 +6,10 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skillmate.backend.entities.BaseEntity;
 import ru.skillmate.backend.entities.resources.Resource;
+import ru.skillmate.backend.entities.skills.Skill;
 
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -47,6 +49,9 @@ public class Users extends BaseEntity implements UserDetails {
     @OneToOne
     @JoinColumn(name = "image_resource_id", referencedColumnName = "id")
     private Resource imageResource;
+
+    @OneToMany(mappedBy = "user")
+    private List<Skill> skills;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

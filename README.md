@@ -12,14 +12,13 @@ SkillMate Backend is the server-side part of the SkillMate project, developed us
 
 - **Java 21**
 - **Spring Boot**
-- **Spring Security**
 - **MinIO** (for file storage)
 - **PostgreSQL** (as the main database)
 - **Docker, Docker Compose**
 
 ## Running the Project
 
-### 1. Start the Infrastructure (Database, File Server, and Other Services)
+### 1. Start the Infrastructure (File Server Minio)
 
 Navigate to the `infra` folder and start `docker-compose`:
 
