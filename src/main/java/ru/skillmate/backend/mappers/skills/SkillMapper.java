@@ -20,7 +20,6 @@ public interface SkillMapper {
     @Named("mapToResponseDto")
     @Mapping(target = "level", source = "level", qualifiedByName = "convertEnumToString")
     @Mapping(target = "achievementIds", source = "achievements", qualifiedByName = "convertResourceToId")
-    @Mapping(target = "commonSkillId", source = "commonSkill", qualifiedByName = "convertCommonSkillToId")
     @Mapping(target = "userId", source = "user", qualifiedByName = "convertUserToId")
     SkillResponseDto mapToResponseDto(Skill skill);
 

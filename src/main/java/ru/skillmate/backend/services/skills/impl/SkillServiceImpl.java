@@ -12,14 +12,17 @@ import ru.skillmate.backend.entities.skills.Skill;
 import ru.skillmate.backend.entities.skills.enums.SkillLevel;
 import ru.skillmate.backend.exceptions.FileException;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
+import ru.skillmate.backend.exceptions.ResourcesNotMatchingException;
 import ru.skillmate.backend.mappers.skills.SkillMapper;
 import ru.skillmate.backend.repositories.skills.SkillRepository;
 import ru.skillmate.backend.services.resources.ResourceService;
 import ru.skillmate.backend.services.skills.SkillService;
 import ru.skillmate.backend.services.users.UsersService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +75,33 @@ public class SkillServiceImpl implements SkillService {
         return skillMapper.mapToResponseDto(skillRepository.save(skill));
     }
 
+    @Override
+    @Transactional
+    public SkillResponseDto editSkill(Long userId, Long skillId, String name, String description, String level, List<MultipartFile> achievements) {
+        Skill skill = getSkillById(skillId);
+        if(!skill.getUser().getId().equals(userId)) {
+            throw ResourcesNotMatchingException.userIdAndSkillIdNotMathing(userId, skillId);
+        }
+        skill.setName(name);
+        skill.setDescription(description);
+        skill.setLevel(SkillLevel.valueOf(level));
+        skill.getAchievements().forEach(achievement -> resourceService.deleteResource(achievement.getId()));
+        if(achievements != null && !achievements.isEmpty()) {
+            skill.setAchievements(saveAchievements(achievements));
+        } else {
+            skill.setAchievements(new ArrayList<>());
+        }
+        return skillMapper.mapToResponseDto(skillRepository.save(skill));
+    }
+
+    @Override
+    @Transactional
+    public void deleteSkillById(Long skillId) {
+        Skill skill = getSkillById(skillId);
+        skill.getAchievements().forEach(achievement -> resourceService.deleteResource(achievement.getId()));
+        skillRepository.deleteById(skillId);
+    }
+
     private List<Resource> saveAchievements(List<MultipartFile> achievements) {
         return achievements
                 .stream()
@@ -81,7 +111,7 @@ public class SkillServiceImpl implements SkillService {
                         }
 
                 )
-                .toList();
+                .collect(Collectors.toList());
     }
 
     private void checkFile(MultipartFile file) {

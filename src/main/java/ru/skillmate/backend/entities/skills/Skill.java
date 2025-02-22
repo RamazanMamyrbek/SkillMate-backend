@@ -14,7 +14,7 @@ import java.util.List;
 @Table(name = "skills")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"achievements", "user"})
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder
 @NoArgsConstructor

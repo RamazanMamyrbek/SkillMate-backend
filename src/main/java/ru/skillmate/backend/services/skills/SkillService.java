@@ -14,4 +14,8 @@ public interface SkillService {
     Skill getSkillById(Long skillId);
 
     SkillResponseDto createSkill(Long userId, String name, String description, String level, List<MultipartFile> achievements);
+
+    SkillResponseDto editSkill(Long userId,Long skillId, String name, String description, String level, List<MultipartFile> achievements);
+
+    void deleteSkillById(Long skillId);
 }

@@ -124,4 +124,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
     }
+
+    @ExceptionHandler(ResourcesNotMatchingException.class)
+    public ResponseEntity<ErrorResponseDto> handleResourcesNotMatchingException(ResourcesNotMatchingException ex, WebRequest webRequest) {
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                ex.getMessage(),
+                LocalDateTime.now()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
+    }
 }
