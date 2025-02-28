@@ -27,7 +27,7 @@ public class Skill extends BaseEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 10000)
     private String description;
 
     @Enumerated(EnumType.STRING)
