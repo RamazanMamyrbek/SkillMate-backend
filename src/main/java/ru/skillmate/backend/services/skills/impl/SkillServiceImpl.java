@@ -10,7 +10,7 @@ import ru.skillmate.backend.dto.skills.response.SkillResponseDto;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 import ru.skillmate.backend.entities.skills.enums.SkillLevel;
-import ru.skillmate.backend.exceptions.FileException;
+import ru.skillmate.backend.entities.users.Users;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.exceptions.ResourcesNotMatchingException;
 import ru.skillmate.backend.mappers.skills.SkillMapper;
@@ -21,7 +21,6 @@ import ru.skillmate.backend.services.users.UsersService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,8 +32,6 @@ public class SkillServiceImpl implements SkillService {
     private final ResourceService resourceService;
     private final UsersService usersService;
     private final SkillMapper skillMapper;
-    @Value("${minio.allowedTypes.allowedAchievementTypes}")
-    private Set<String> allowedAchievementTypes;
     @Value("${minio.folders.skillAchievements}")
     private String folderSkillAchievements;
     @Override
@@ -61,13 +58,14 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     @Transactional
-    public SkillResponseDto createSkill(Long userId, String name, String description, String level, List<MultipartFile> achievements) {
+    public SkillResponseDto createSkill(Long userId, String name, String description, String level, List<MultipartFile> achievements, String email) {
+        Users user = (Users) usersService.getUserByUsername(email);
         Skill skill = Skill
                 .builder()
                 .name(name)
                 .description(description)
                 .level(SkillLevel.valueOf(level))
-                .user(usersService.getUserById(userId))
+                .user(user)
                 .build();
         if(achievements != null && !achievements.isEmpty()) {
             skill.setAchievements(saveAchievements(achievements));
@@ -77,11 +75,10 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     @Transactional
-    public SkillResponseDto editSkill(Long userId, Long skillId, String name, String description, String level, List<MultipartFile> achievements) {
+    public SkillResponseDto editSkill(Long userId, Long skillId, String name, String description, String level, List<MultipartFile> achievements, String email) {
         Skill skill = getSkillById(skillId);
-        if(!skill.getUser().getId().equals(userId)) {
-            throw ResourcesNotMatchingException.userIdAndSkillIdNotMathing(userId, skillId);
-        }
+        Users user = (Users) usersService.getUserByUsername(email);
+        checkSkillBelongsToUser(skill, user);
         skill.setName(name);
         skill.setDescription(description);
         skill.setLevel(SkillLevel.valueOf(level));
@@ -96,46 +93,28 @@ public class SkillServiceImpl implements SkillService {
 
     @Override
     @Transactional
-    public void deleteSkillById(Long skillId) {
+    public void deleteSkillById(Long skillId, String email) {
         Skill skill = getSkillById(skillId);
+        checkSkillBelongsToUser(skill, (Users) usersService.getUserByUsername(email));
         skill.getAchievements().forEach(achievement -> resourceService.deleteResource(achievement.getId()));
         skillRepository.deleteById(skillId);
+    }
+
+    private void checkSkillBelongsToUser(Skill skill, Users user) {
+        if(!skill.getUser().equals(user)) {
+            throw ResourcesNotMatchingException.userIdAndSkillIdNotMathing(user.getId(), skill.getId());
+        }
     }
 
     private List<Resource> saveAchievements(List<MultipartFile> achievements) {
         return achievements
                 .stream()
                 .map(achievement -> {
-                            checkFile(achievement);
+                            resourceService.checkFile(achievement);
                             return resourceService.saveResource(achievement, folderSkillAchievements);
                         }
 
                 )
                 .collect(Collectors.toList());
     }
-
-    private void checkFile(MultipartFile file) {
-        if (file == null) {
-            log.error("File is null");
-            throw new FileException("File is null");
-        }
-        if (file.isEmpty()) {
-            log.error("File is empty");
-            throw new FileException("File is empty");
-        }
-        if (file.getOriginalFilename() == null) {
-            log.error("File has no original filename");
-            throw new FileException("File has no original filename");
-        }
-        if (file.getContentType() == null) {
-            log.error("File has no content type");
-            throw new FileException("File has no content type");
-        }
-        if (!allowedAchievementTypes.contains(file.getContentType())) {
-            log.error("Invalid file type: {}", file.getContentType());
-            throw new FileException("Invalid file type. Submit only image/png,image/jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword files");
-        }
-    }
-
-
 }

@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.servlet.HandlerMapping;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
 
 import java.io.IOException;
@@ -31,11 +32,18 @@ public class JwtFilter extends OncePerRequestFilter {
     private final ObjectMapper objectMapper;
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException{
+        String servletPath = request.getServletPath();
+        // Пропускаем публичные маршруты
+        if (isPublicEndpoint(servletPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         String accessToken = extractCookie(request, ACCESS_TOKEN);
         String refreshToken = extractCookie(request, REFRESH_TOKEN);
         try {
-            if(accessToken != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                if(jwtProvider.validateToken(accessToken)) {
+            if(SecurityContextHolder.getContext().getAuthentication() == null) {
+                if(accessToken != null && jwtProvider.validateToken(accessToken)) {
                     authenticateUser(accessToken);
                 }  else if (refreshToken != null && jwtProvider.validateToken(refreshToken)) {
                     String newAccessToken = jwtProvider.refreshAccessToken(refreshToken);
@@ -84,6 +92,14 @@ public class JwtFilter extends OncePerRequestFilter {
         cookie.setPath("/");
         cookie.setMaxAge(jwtProvider.getAccessKeyExpiration());
         response.addCookie(cookie);
+    }
+
+    private boolean isPublicEndpoint(String path) {
+        return path.startsWith("/v3/api-docs") ||
+                path.startsWith("/swagger-ui") ||
+                path.equals("/swagger-ui.html") ||
+                path.startsWith("/api/users/auth/") ||
+                path.startsWith("/api/resources/");
     }
 
 }

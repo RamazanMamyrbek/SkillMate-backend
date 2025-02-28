@@ -43,6 +43,8 @@ minio:
   bucketName: projectbucket
   allowedTypes:
     allowedAchievementTypes: image/png,image/jpeg,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword
+    allowedImageTypes: image/png,image/jpeg
   folders:
     profileImages: profile_images
     skillAchievements: skill_achievements
+    adImages: ad_images

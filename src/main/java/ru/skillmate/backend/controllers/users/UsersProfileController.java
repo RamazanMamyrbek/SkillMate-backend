@@ -1,6 +1,8 @@
 package ru.skillmate.backend.controllers.users;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -11,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.errors.ErrorResponseDto;
 import ru.skillmate.backend.dto.users.request.ProfileEditRequestDto;
 import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.services.users.UsersService;
@@ -31,8 +34,11 @@ public class UsersProfileController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Profile was get successfully"),
-            @ApiResponse(responseCode = "403", description = "Authorization error"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
     })
     public ResponseEntity<UserProfileResponseDto> getProfileInfo(Principal principal) {
         UserProfileResponseDto responseDto = usersService.getProfileInfo(principal.getName());
@@ -45,9 +51,15 @@ public class UsersProfileController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Profile was edited successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "403", description = "Authorization error"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
     })
     public ResponseEntity<UserProfileResponseDto> editProfile(Principal principal,
                                                               @RequestBody @Valid ProfileEditRequestDto profileEditRequestDto) {
@@ -61,9 +73,15 @@ public class UsersProfileController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Profile image was edited successfully"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "403", description = "Authorization error"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
     })
     public ResponseEntity<UserProfileResponseDto> editProfile(Principal principal,
                                                               @RequestParam MultipartFile image) {

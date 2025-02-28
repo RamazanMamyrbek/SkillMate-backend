@@ -5,9 +5,11 @@ import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skillmate.backend.entities.BaseEntity;
+import ru.skillmate.backend.entities.ads.Ad;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,7 +53,11 @@ public class Users extends BaseEntity implements UserDetails {
     private Resource imageResource;
 
     @OneToMany(mappedBy = "user")
-    private List<Skill> skills;
+    private List<Skill> skills = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user")
+    private List<Ad> ads = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

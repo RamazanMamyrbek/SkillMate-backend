@@ -31,4 +31,8 @@ public class ResourceNotFoundException extends RuntimeException{
     public static ResourceNotFoundException skillNotFound(Long skillId) {
         return new ResourceNotFoundException("Skill with id %s was not found".formatted(skillId));
     }
+
+    public static ResourceNotFoundException adNotFound(Long adId) {
+        return new ResourceNotFoundException("Ad with id %s was not found".formatted(adId));
+    }
 }

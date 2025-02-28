@@ -14,4 +14,9 @@ public interface ResourceService {
     Resource updateResource(Long resourceId, MultipartFile file);
 
     void deleteResource(Long resourceId);
+
+    void checkImage(MultipartFile file);
+
+    void checkFile(MultipartFile file);
+
 }
