@@ -84,6 +84,12 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public UserProfileResponseDto getUserInfo(Long userId) {
+        Users user = getUserById(userId);
+        return usersMapper.userToUserResponseDto(user);
+    }
+
+    @Override
     @Transactional
     public UserProfileResponseDto editProfile(String email, ProfileEditRequestDto profileEditRequestDto) {
         Users user = getUserByUsername(email);

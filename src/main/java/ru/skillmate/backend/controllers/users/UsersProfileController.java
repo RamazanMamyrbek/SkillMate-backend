@@ -45,6 +45,27 @@ public class UsersProfileController {
         return ResponseEntity.ok().body(responseDto);
     }
 
+    @GetMapping(value = "/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Get user info"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "User info was get successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "404", description = "User was not found", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<UserProfileResponseDto> getProfileInfo(@PathVariable Long userId) {
+        UserProfileResponseDto responseDto = usersService.getUserInfo(userId);
+        return ResponseEntity.ok().body(responseDto);
+    }
+
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Edit profile"

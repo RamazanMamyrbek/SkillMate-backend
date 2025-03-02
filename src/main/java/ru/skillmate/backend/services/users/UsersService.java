@@ -30,4 +30,6 @@ public interface UsersService {
     UserProfileResponseDto editProfile(String email, ProfileEditRequestDto profileEditRequestDto);
 
     UserProfileResponseDto editProfileImage(String email, MultipartFile image);
+
+    UserProfileResponseDto getUserInfo(Long userId);
 }
