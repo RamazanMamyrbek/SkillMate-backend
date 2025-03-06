@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" style="font-size: 16px;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exchange Request</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Lato', Arial, sans-serif; background-color: #EAEFF4;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="height: 100%; padding: 7% 10%;">
+    <tr>
+        <td>
+            <table align="center" cellpadding="0" cellspacing="0" border="0" role="presentation" style="width: 100%; max-width: 750px;">
+                <tr>
+                    <td>
+                        <table class="wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" role="presentation" style="background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);">
+                            <tr>
+                                <td align="center" style="padding: 2rem;">
+                                    <img src="cid:logo" alt="logo" style="display: block; width: 150px;">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="padding: 1.5rem;">
+                                    <h2 style="font-family: 'Montserrat', sans-serif; font-size: 1.8rem; font-weight: 500; color: #000;">New Exchange Request</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 0 2rem;">
+                                    <p style="font-size: 1.2rem; color: #333; text-align: center;">You have received a new exchange request for your ad: <strong style="color: #007bff;" th:text="${adTitle}">Listing Title</strong></p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td align="center" style="padding: 1.5rem;">
+                                    <table width="80%" style="background-color: #EAEFF4; border-radius: 8px; padding: 1rem; text-align: left;">
+                                        <tr>
+                                            <td><strong>Requested by:</strong></td>
+                                            <td th:text="${requesterName}" style="color: #000;">User Name</td>
+                                        </tr>
+                                        <tr>
+                                            <td><strong>Email:</strong></td>
+                                            <td><a th:href="@{'mailto:' + ${requesterEmail}}" style="color: #007bff; text-decoration: none;" th:text="${requesterEmail}">email@example.com</a></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" style="padding-top: 0.5rem;"><strong>Message:</strong></td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="2" th:text="${requestMessage}" style="color: #333; padding-bottom: 0.5rem;">Message content</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td align="center" style="border-top: 1px solid #B1B9BE; background-color: #ffffff;">
+                        <p style="padding: 2rem 1.5rem; font-size: 1rem; color: #555;">You received this email because you are registered on the SkillMate platform.</p>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

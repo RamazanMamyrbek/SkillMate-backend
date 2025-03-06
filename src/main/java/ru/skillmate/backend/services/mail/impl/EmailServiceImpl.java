@@ -12,6 +12,9 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
+import ru.skillmate.backend.entities.ads.Ad;
+import ru.skillmate.backend.entities.ads.ExchangeRequest;
+import ru.skillmate.backend.entities.users.Users;
 import ru.skillmate.backend.services.mail.EmailService;
 
 @Service
@@ -32,6 +35,27 @@ public class EmailServiceImpl implements EmailService {
         }catch (Exception e) {
             handleMailException(e);
         }
+    }
+
+    @Override
+    @Async
+    public void sendExchangeRequestNotification(Users requester, Ad ad, ExchangeRequest exchangeRequest) {
+        try {
+            String subject = "Skill exchange proposal";
+            sendHtmlExchangeRequestNotification(subject, requester, ad, exchangeRequest);
+        } catch (Exception e) {
+            handleMailException(e);
+        }
+    }
+
+    private void sendHtmlExchangeRequestNotification(String subject, Users requester, Ad ad, ExchangeRequest exchangeRequest) throws MessagingException {
+        Context context = new Context();
+        context.setVariable("requesterName", requester.getFullName());
+        context.setVariable("requesterEmail", requester.getEmail());
+        context.setVariable("adTitle", ad.getSkillName());
+        context.setVariable("requestMessage", exchangeRequest.getMessage());
+        String templateName = "exchange-request";
+        sendHtmlMessage(subject, ad.getUser().getEmail(), context, templateName);
     }
 
     private void sendHtmlConfirmationCode(String subject, String email, String code) throws MessagingException {
