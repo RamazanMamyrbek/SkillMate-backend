@@ -7,5 +7,4 @@ import ru.skillmate.backend.entities.ads.Ad;
 
 @Repository
 public interface AdRepository extends JpaRepository<Ad, Long>, JpaSpecificationExecutor<Ad> {
-
 }

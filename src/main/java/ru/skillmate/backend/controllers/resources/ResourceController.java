@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.skillmate.backend.dto.resources.response.FileDto;
 import ru.skillmate.backend.services.resources.ResourceService;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/resources")
@@ -25,9 +28,11 @@ public class ResourceController {
     @GetMapping("/{resourceId}")
     public ResponseEntity<InputStreamResource> getResource(@PathVariable("resourceId") Long resourceId) {
         FileDto fileDto = resourceService.getFileDtoById(resourceId);
+        String encodedFileName = URLEncoder.encode(fileDto.name(), StandardCharsets.UTF_8);
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"%s\"".formatted(fileDto.name()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename='%s'".formatted(encodedFileName))
+                .header("File-Name", encodedFileName)
                 .contentType(MediaType.valueOf(fileDto.contentType()))
                 .body(fileDto.file());
     }

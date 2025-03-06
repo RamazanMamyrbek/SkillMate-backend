@@ -1,6 +1,5 @@
 package ru.skillmate.backend.services.ads.impl;
 
-import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -14,7 +13,6 @@ import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.entities.ads.Ad;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
-import ru.skillmate.backend.entities.skills.enums.SkillLevel;
 import ru.skillmate.backend.entities.users.Users;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.exceptions.ResourcesNotMatchingException;
@@ -23,6 +21,7 @@ import ru.skillmate.backend.repositories.ads.AdRepository;
 import ru.skillmate.backend.services.ads.AdService;
 import ru.skillmate.backend.services.resources.ResourceService;
 import ru.skillmate.backend.services.users.UsersService;
+import ru.skillmate.backend.spec.AdSpecifications;
 
 import java.util.List;
 
@@ -37,15 +36,14 @@ public class AdServiceImpl implements AdService {
     @Value("${minio.folders.adImages}")
     private String folderAdsImages;
 
-
     @Override
-    public PageResponseDto<AdResponseDto> searchAds(PageRequest pageRequest, String searchValue, String country, String city, String level) {
-        Specification<Ad> spec = generateSearchFilters(searchValue, country, city, level);
+    public PageResponseDto<AdResponseDto> searchAds(PageRequest pageRequest, String searchValue, List<String> countries, List<String> cities, List<String> levels) {
+        Specification<Ad> spec = AdSpecifications.bySearchFilters(searchValue, countries, cities, levels);
         Page<Ad> adPage = adRepository.findAll(spec, pageRequest);
-        List<AdResponseDto> content = adPage.getContent()
-                .stream()
+        List<AdResponseDto> content = adPage.getContent().stream()
                 .map(adMapper::mapToResponseDto)
                 .toList();
+
         return new PageResponseDto<>(
                 content,
                 adPage.getNumber(),
@@ -126,30 +124,5 @@ public class AdServiceImpl implements AdService {
                 .contains(skillName)) {
             throw ResourcesNotMatchingException.skillNameNotValidForAd(skillName, user.getId());
         }
-    }
-
-    private Specification<Ad> generateSearchFilters(String searchValue, String country, String city, String level) {
-        return (root, query, criteriaBuilder) -> {
-            Predicate predicate = criteriaBuilder.conjunction();
-            if(searchValue != null && !searchValue.isEmpty()) {
-                predicate = criteriaBuilder.and(
-                        predicate,
-                        criteriaBuilder.like(
-                                criteriaBuilder.lower(root.get("skillName")),
-                                "%" + searchValue.toLowerCase() + "%"
-                        )
-                );
-            }
-            if(country != null && !country.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("country"), country));
-            }
-            if(city != null && !city.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("city"), city));
-            }
-            if(level != null && !level.isEmpty()) {
-                predicate = criteriaBuilder.and(predicate, criteriaBuilder.equal(root.get("level"), SkillLevel.valueOf(level)));
-            }
-            return predicate;
-        };
     }
 }

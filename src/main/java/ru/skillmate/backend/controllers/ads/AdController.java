@@ -23,6 +23,7 @@ import ru.skillmate.backend.dto.errors.ErrorResponseDto;
 import ru.skillmate.backend.services.ads.AdService;
 
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -39,9 +40,9 @@ public class AdController {
                     @Parameter(name = "page", description = "Page number(1-based)", example = "1"),
                     @Parameter(name = "size", description = "Items per page", example = "10"),
                     @Parameter(name = "searchValue", description = "Search value for searching", required = false),
-                    @Parameter(name = "country", description = "Filter for country", required = false),
-                    @Parameter(name = "city", description = "Filter for city", required = false),
-                    @Parameter(name = "level", description = "Filter for skill level", required = false)
+                    @Parameter(name = "countries", description = "Filter for country", required = false),
+                    @Parameter(name = "cities", description = "Filter for city", required = false),
+                    @Parameter(name = "levels", description = "Filter for skill level", required = false)
             }
     )
     @ApiResponses(value = {
@@ -55,10 +56,10 @@ public class AdController {
     public ResponseEntity<PageResponseDto<AdResponseDto>> getAll(@RequestParam(defaultValue = "1") int page,
                                                                  @RequestParam(defaultValue = "10") int size,
                                                                  @RequestParam(required = false) String searchValue,
-                                                                 @RequestParam(required = false) String country,
-                                                                 @RequestParam(required = false) String city,
-                                                                 @RequestParam(required = false) String level) {
-        PageResponseDto<AdResponseDto> responseDtoList = adService.searchAds(PageRequest.of(page-1, size), searchValue, country, city, level);
+                                                                 @RequestParam(required = false) List<String> countries,
+                                                                 @RequestParam(required = false) List<String> cities,
+                                                                 @RequestParam(required = false) List<String> levels) {
+        PageResponseDto<AdResponseDto> responseDtoList = adService.searchAds(PageRequest.of(page-1, size), searchValue, countries, cities, levels);
         return ResponseEntity.ok().body(responseDtoList);
     }
 

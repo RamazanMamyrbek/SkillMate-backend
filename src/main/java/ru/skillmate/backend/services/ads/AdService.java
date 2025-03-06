@@ -6,6 +6,8 @@ import ru.skillmate.backend.dto.ads.response.AdResponseDto;
 import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.entities.ads.Ad;
 
+import java.util.List;
+
 public interface AdService {
 
     AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email);
@@ -18,5 +20,5 @@ public interface AdService {
 
     void deleteAd(Long adId, String email);
 
-    PageResponseDto<AdResponseDto> searchAds(PageRequest pageRequest, String searchValue, String country, String city, String level);
+    PageResponseDto<AdResponseDto> searchAds(PageRequest pageRequest, String searchValue, List<String> country, List<String> city, List<String> level);
 }
