@@ -25,6 +25,7 @@ public interface UsersMapper {
     Users pendingUserToUser(PendingUser pendingUser);
 
     @Mapping(target = "imageResourceId", source = "user.imageResource", qualifiedByName = "mapResourceToId")
+    @Mapping(target = "isOnline", expression = "java(user.isUserOnline())")
     UserProfileResponseDto userToUserResponseDto(Users user);
 
     @Mapping(target = "id", ignore = true)

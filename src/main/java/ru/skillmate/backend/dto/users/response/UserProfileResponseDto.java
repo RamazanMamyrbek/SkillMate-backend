@@ -3,6 +3,7 @@ package ru.skillmate.backend.dto.users.response;
 import ru.skillmate.backend.dto.skills.response.SkillResponseDto;
 import ru.skillmate.backend.entities.users.Gender;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record UserProfileResponseDto(
@@ -13,6 +14,8 @@ public record UserProfileResponseDto(
         String country,
         Gender gender,
         String city,
-        Long imageResourceId
+        Long imageResourceId,
+        LocalDateTime lastSeen,
+        boolean isOnline
 ) {
 }

@@ -18,6 +18,9 @@ import ru.skillmate.backend.repositories.users.UserRepository;
 import ru.skillmate.backend.services.resources.ResourceService;
 import ru.skillmate.backend.services.users.UsersService;
 
+import java.security.Principal;
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -87,6 +90,22 @@ public class UsersServiceImpl implements UsersService {
     public UserProfileResponseDto getUserInfo(Long userId) {
         Users user = getUserById(userId);
         return usersMapper.userToUserResponseDto(user);
+    }
+
+    @Override
+    public Users getUserByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(
+                () -> ResourceNotFoundException.userNotFoundByEmail(email)
+        );
+    }
+
+    @Override
+    public List<UserProfileResponseDto> getAllUsersExceptSelf(Principal principal) {
+        Users user = getUserByEmail(principal.getName());
+        return userRepository.findAllUsersExceptSelf(user.getId())
+                .stream()
+                .map(usersMapper::userToUserResponseDto)
+                .toList();
     }
 
     @Override

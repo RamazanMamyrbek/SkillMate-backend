@@ -35,4 +35,12 @@ public class ResourceNotFoundException extends RuntimeException{
     public static ResourceNotFoundException adNotFound(Long adId) {
         return new ResourceNotFoundException("Ad with id %s was not found".formatted(adId));
     }
+
+    public static ResourceNotFoundException userNotFoundByEmail(String email) {
+        return new ResourceNotFoundException("User with email %s was not found".formatted(email));
+    }
+
+    public static ResourceNotFoundException chatNotFound(String chatId) {
+        return new ResourceNotFoundException("Chat with id %s was not found".formatted(chatId));
+    }
 }

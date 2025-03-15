@@ -48,3 +48,4 @@ minio:
     profileImages: profile_images
     skillAchievements: skill_achievements
     adImages: ad_images
+    chats: chats

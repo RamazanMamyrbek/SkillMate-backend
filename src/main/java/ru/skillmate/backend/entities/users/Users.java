@@ -6,9 +6,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skillmate.backend.entities.BaseEntity;
 import ru.skillmate.backend.entities.ads.Ad;
+import ru.skillmate.backend.entities.chats.Chat;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -22,7 +24,15 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@NamedQuery(name = UserConstants.FIND_USER_BY_EMAIL,
+        query = "SELECT u FROM Users u WHERE u.email = :email"
+)
+@NamedQuery(name = UserConstants.FIND_ALL_USERS_EXCEPT_SELF,
+        query = "SELECT u FROM Users u WHERE u.id != :publicId")
+@NamedQuery(name = UserConstants.FIND_USER_BY_PUBLIC_ID,
+        query = "SELECT u FROM Users u WHERE u.id = :publicId")
 public class Users extends BaseEntity implements UserDetails {
+    private static final int LAST_ACTIVE_INTERVAL = 5;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,6 +69,19 @@ public class Users extends BaseEntity implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Ad> ads = new ArrayList<>();
 
+    private LocalDateTime lastSeen;
+
+    @OneToMany(mappedBy = "sender")
+    private List<Chat> chatsAsSender;
+
+    @OneToMany(mappedBy = "recipient")
+    private List<Chat> chatsAsRecipient;
+
+    @Transient
+    public boolean isUserOnline() {
+        return lastSeen != null && lastSeen.isAfter(LocalDateTime.now().minusMinutes(LAST_ACTIVE_INTERVAL));
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -72,25 +95,5 @@ public class Users extends BaseEntity implements UserDetails {
     @Override
     public String getUsername() {
         return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
     }
 }

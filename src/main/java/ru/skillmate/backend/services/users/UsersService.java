@@ -7,6 +7,9 @@ import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.entities.users.PendingUser;
 import ru.skillmate.backend.entities.users.Users;
 
+import java.security.Principal;
+import java.util.List;
+
 public interface UsersService {
     PendingUser savePendingUser(PendingUser pendingUser);
 
@@ -32,4 +35,8 @@ public interface UsersService {
     UserProfileResponseDto editProfileImage(String email, MultipartFile image);
 
     UserProfileResponseDto getUserInfo(Long userId);
+
+    Users getUserByEmail(String name);
+
+    List<UserProfileResponseDto> getAllUsersExceptSelf(Principal principal);
 }
