@@ -4,16 +4,20 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.skillmate.backend.dto.ads.request.ExchangeRequestDto;
+import ru.skillmate.backend.dto.ads.response.ExchangeRequestDecisionDto;
 import ru.skillmate.backend.dto.ads.response.ExchangeResponseDto;
 import ru.skillmate.backend.entities.ads.Ad;
 import ru.skillmate.backend.entities.ads.ExchangeRequest;
+import ru.skillmate.backend.entities.ads.enums.ExchangeStatus;
 import ru.skillmate.backend.entities.users.Users;
 import ru.skillmate.backend.exceptions.IllegalArgumentException;
 import ru.skillmate.backend.exceptions.ResourceAlreadyTakenException;
+import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.mappers.ads.ExchangeRequestMapper;
 import ru.skillmate.backend.repositories.ads.ExchangeRequestRepository;
 import ru.skillmate.backend.services.ads.AdService;
 import ru.skillmate.backend.services.ads.ExchangeRequestService;
+import ru.skillmate.backend.services.chats.ChatService;
 import ru.skillmate.backend.services.mail.EmailService;
 import ru.skillmate.backend.services.users.UsersService;
 
@@ -28,6 +32,7 @@ public class ExchangeRequestServiceImpl implements ExchangeRequestService {
     private final AdService adService;
     private final ExchangeRequestMapper exchangeRequestMapper;
     private final EmailService emailService;
+    private final ChatService chatService;
     @Override
     @Transactional
     public ExchangeResponseDto createExchangeRequest(ExchangeRequestDto exchangeRequestDto, String requesterEmail) {
@@ -67,6 +72,34 @@ public class ExchangeRequestServiceImpl implements ExchangeRequestService {
                 .stream()
                 .map(exchangeRequestMapper::mapToResponseDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public ExchangeRequestDecisionDto acceptOrDecline(Long requestId, ExchangeStatus status, String email) {
+        Users receiver = (Users) usersService.getUserByUsername(email);
+        ExchangeRequest exchangeRequest = getExchangeRequestById(requestId);
+        if(!exchangeRequest.getReceiver().equals(receiver)) {
+            throw ResourceNotFoundException.exchangeRequestNotFoundByRequestIdAndUser(requestId, receiver);
+        }
+        String chatId = "";
+        switch (exchangeRequest.getExchangeStatus()) {
+            case PENDING -> chatId = chatService.createChat(exchangeRequest.getReceiver().getId(), exchangeRequest.getRequester().getId());
+            case ACCEPTED -> throw ResourceAlreadyTakenException.exchangeRequestAlreadyAcceptedException(exchangeRequest.getId());
+            case DECLINED -> throw ResourceAlreadyTakenException.exchangeRequestAlreadyDeclinedException(exchangeRequest.getId());
+        }
+        exchangeRequest.setExchangeStatus(status);
+        exchangeRequestRepository.save(exchangeRequest);
+        return new ExchangeRequestDecisionDto(
+                chatId,
+                exchangeRequestMapper.mapToResponseDto(exchangeRequest)
+        );
+    }
+
+    private ExchangeRequest getExchangeRequestById(Long requestId) {
+        return exchangeRequestRepository.findById(requestId).orElseThrow(
+                () -> ResourceNotFoundException.exchangeRequestNotFoundById(requestId)
+        );
     }
 
     private void checkByRequesterAndAd(Users requester, Ad ad) {

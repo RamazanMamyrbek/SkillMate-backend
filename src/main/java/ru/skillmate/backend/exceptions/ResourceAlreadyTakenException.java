@@ -17,4 +17,12 @@ public class ResourceAlreadyTakenException extends RuntimeException{
     public static ResourceAlreadyTakenException exchangeRequestAlreadyExistsByRequesterAndAd(Long userId, Long adId) {
         return new ResourceAlreadyTakenException("Exchange request with user id %s and ad id %s already exists".formatted(userId, adId));
     }
+
+    public static ResourceAlreadyTakenException exchangeRequestAlreadyAcceptedException(Long id) {
+        return new ResourceAlreadyTakenException("Exchange request with id %s was already accepted".formatted(id));
+    }
+
+    public static ResourceAlreadyTakenException exchangeRequestAlreadyDeclinedException(Long id) {
+        return new ResourceAlreadyTakenException("Exchange request with id %s was already declined".formatted(id));
+    }
 }

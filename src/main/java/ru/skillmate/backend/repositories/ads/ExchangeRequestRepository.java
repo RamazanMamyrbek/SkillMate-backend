@@ -15,4 +15,6 @@ public interface ExchangeRequestRepository extends JpaRepository<ExchangeRequest
     List<ExchangeRequest> findAllByRequester(Users requester);
 
     List<ExchangeRequest> findAllByReceiver(Users receiver);
+
+    boolean existsByIdAndRequester(Long requestId, Users requester);
 }

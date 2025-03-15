@@ -14,12 +14,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.skillmate.backend.dto.ads.request.ExchangeRequestDto;
+import ru.skillmate.backend.dto.ads.response.ExchangeRequestDecisionDto;
 import ru.skillmate.backend.dto.ads.response.ExchangeResponseDto;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
+import ru.skillmate.backend.entities.ads.enums.ExchangeStatus;
 import ru.skillmate.backend.services.ads.ExchangeRequestService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/ads/exchange-requests")
@@ -86,4 +89,28 @@ public class ExchangeRequestController {
         ExchangeResponseDto responseDto = exchangeRequestService.createExchangeRequest(exchangeRequestDto, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
+
+    @PatchMapping("/{requestId}")
+    @Operation(
+            summary = "Accept or decline an exchange request"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Request was created successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<ExchangeRequestDecisionDto> acceptOrDecline(@PathVariable Long requestId,
+                                                                      @RequestParam ExchangeStatus status,
+                                                                      Principal principal) {
+        ExchangeRequestDecisionDto decisionDto = exchangeRequestService.acceptOrDecline(requestId, status, principal.getName());
+        return ResponseEntity.ok(decisionDto);
+    }
+
 }

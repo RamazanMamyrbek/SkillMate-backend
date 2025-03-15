@@ -1,6 +1,7 @@
 package ru.skillmate.backend.exceptions;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import ru.skillmate.backend.entities.users.Users;
 
 public class ResourceNotFoundException extends RuntimeException{
 
@@ -42,5 +43,13 @@ public class ResourceNotFoundException extends RuntimeException{
 
     public static ResourceNotFoundException chatNotFound(String chatId) {
         return new ResourceNotFoundException("Chat with id %s was not found".formatted(chatId));
+    }
+
+    public static ResourceNotFoundException exchangeRequestNotFoundByRequestIdAndUser(Long requestId, Users receiver) {
+        return new ResourceNotFoundException("Exchange request with id %s does not aimed to user with id %s".formatted(requestId, receiver.getId()));
+    }
+
+    public static ResourceNotFoundException exchangeRequestNotFoundById(Long requestId) {
+        return new ResourceNotFoundException("Exchange request with id %s was not found".formatted(requestId));
     }
 }
