@@ -20,4 +20,8 @@ public class ResourcesNotMatchingException extends RuntimeException{
     public static ResourcesNotMatchingException adDoesNottBelongToUser(Long adId, Long userId) {
         return new ResourcesNotMatchingException("Ad with id %s does not belong to user with id %s".formatted(adId, userId));
     }
+
+    public static ResourcesNotMatchingException reviewDoesNotBelongToUser(Long reviewId, Long reviewerId) {
+        return new ResourcesNotMatchingException("Review with id %s does not belong to reviewer with id %s".formatted(reviewId, reviewerId));
+    }
 }

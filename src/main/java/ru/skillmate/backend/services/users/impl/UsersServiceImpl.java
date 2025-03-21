@@ -109,6 +109,14 @@ public class UsersServiceImpl implements UsersService {
     }
 
     @Override
+    public List<UserProfileResponseDto> getAllUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(usersMapper::userToUserResponseDto)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public UserProfileResponseDto editProfile(String email, ProfileEditRequestDto profileEditRequestDto) {
         Users user = getUserByUsername(email);

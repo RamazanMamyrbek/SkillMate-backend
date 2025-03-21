@@ -25,4 +25,8 @@ public class ResourceAlreadyTakenException extends RuntimeException{
     public static ResourceAlreadyTakenException exchangeRequestAlreadyDeclinedException(Long id) {
         return new ResourceAlreadyTakenException("Exchange request with id %s was already declined".formatted(id));
     }
+
+    public static ResourceAlreadyTakenException reviewWithReviewerAndRecipientAlreadyExists(Long reviewerId, Long recipientId) {
+        return new ResourceAlreadyTakenException("Review with reviewerId %s and recipientId %s does already exists".formatted(reviewerId, recipientId));
+    }
 }

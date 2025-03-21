@@ -52,4 +52,8 @@ public class ResourceNotFoundException extends RuntimeException{
     public static ResourceNotFoundException exchangeRequestNotFoundById(Long requestId) {
         return new ResourceNotFoundException("Exchange request with id %s was not found".formatted(requestId));
     }
+
+    public static ResourceNotFoundException reviewNotFound(Long reviewId) {
+        return new ResourceNotFoundException("Review with id %s was not found".formatted(reviewId));
+    }
 }

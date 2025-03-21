@@ -14,6 +14,6 @@ public interface MessageMapper {
     @Mapping(target = "messageState", source = "message.messageState")
     @Mapping(target = "senderId", source = "message.senderId")
     @Mapping(target = "receiverId", source = "message.receiverId")
-    @Mapping(target = "createdAt", source = "message.createdAt") // Учитываем дату создания
+    @Mapping(target = "createdAt", source = "message.createdAt")
     MessageResponseDto toMessageResponse(Message message);
 }

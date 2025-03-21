@@ -28,6 +28,7 @@ import java.security.Principal;
 public class UsersProfileController {
     private final UsersService usersService;
 
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Get profile info"

@@ -39,4 +39,6 @@ public interface UsersService {
     Users getUserByEmail(String name);
 
     List<UserProfileResponseDto> getAllUsersExceptSelf(Principal principal);
+
+    List<UserProfileResponseDto> getAllUsers();
 }

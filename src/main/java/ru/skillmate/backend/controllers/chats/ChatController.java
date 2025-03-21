@@ -15,9 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.skillmate.backend.dto.chats.response.ChatResponse;
 import ru.skillmate.backend.dto.common.StringResponse;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
-import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.services.chats.ChatService;
-import ru.skillmate.backend.services.users.UsersService;
 
 import java.security.Principal;
 import java.util.List;
@@ -29,7 +27,6 @@ import java.util.List;
 @Tag(name = "ChatController", description = "Endpoints for chats management")
 public class ChatController {
     private final ChatService chatService;
-    private final UsersService usersService;
 
     @PostMapping
     @Operation(
