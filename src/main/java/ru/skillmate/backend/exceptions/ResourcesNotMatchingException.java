@@ -24,4 +24,8 @@ public class ResourcesNotMatchingException extends RuntimeException{
     public static ResourcesNotMatchingException reviewDoesNotBelongToUser(Long reviewId, Long reviewerId) {
         return new ResourcesNotMatchingException("Review with id %s does not belong to reviewer with id %s".formatted(reviewId, reviewerId));
     }
+
+    public static ResourcesNotMatchingException postDoesNotBelongToUser(Long userId, Long postId) {
+        return new ResourcesNotMatchingException("Post with id %s does not belong to user with id %s".formatted(postId, userId));
+    }
 }

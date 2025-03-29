@@ -36,7 +36,7 @@ public interface UsersService {
 
     UserProfileResponseDto getUserInfo(Long userId);
 
-    Users getUserByEmail(String name);
+    Users getUserByEmail(String email);
 
     List<UserProfileResponseDto> getAllUsersExceptSelf(Principal principal);
 

@@ -49,3 +49,4 @@ minio:
     skillAchievements: skill_achievements
     adImages: ad_images
     chats: chats
+    postImages: post_images
