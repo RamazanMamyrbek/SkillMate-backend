@@ -1,6 +1,7 @@
 package ru.skillmate.backend.services.posts;
 
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.posts.response.CommentResponseDto;
 import ru.skillmate.backend.dto.posts.response.PostResponseDto;
 
 import java.util.List;
@@ -15,4 +16,16 @@ public interface PostService {
     PostResponseDto getPost(Long postId);
 
     void deletePost(Long postId, String email);
+
+    List<CommentResponseDto> getAllComments(Long postId);
+
+    CommentResponseDto createComment(Long postId, String text, String email);
+
+    void deleteComment(Long commentId, Long postId, String email);
+
+    void likePost(Long postId, String email);
+
+    void unlikePost(Long postId, String email);
+
+    Integer getLikesCount(Long postId);
 }

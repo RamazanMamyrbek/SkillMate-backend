@@ -12,7 +12,7 @@ import java.util.List;
 @Table(name = "posts")
 @Getter
 @Setter
-@ToString(exclude = {"user"})
+@ToString
 @EqualsAndHashCode(of = {"id"}, callSuper = false)
 @Builder
 @NoArgsConstructor

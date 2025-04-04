@@ -28,4 +28,12 @@ public class ResourcesNotMatchingException extends RuntimeException{
     public static ResourcesNotMatchingException postDoesNotBelongToUser(Long userId, Long postId) {
         return new ResourcesNotMatchingException("Post with id %s does not belong to user with id %s".formatted(postId, userId));
     }
+
+    public static ResourcesNotMatchingException commentDoesNotBelongToPost(Long commmentId, Long postId) {
+        return new ResourcesNotMatchingException("Comment with id %s does not belong to post with id %s".formatted(commmentId, postId));
+    }
+
+    public static ResourcesNotMatchingException commentDoesNotBelongToUser(Long commmentId, Long userId) {
+        return new ResourcesNotMatchingException("Comment with id %s does not belong to user with id %s".formatted(commmentId, userId));
+    }
 }

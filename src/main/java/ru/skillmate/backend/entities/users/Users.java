@@ -19,7 +19,7 @@ import java.util.List;
 @Table(name = "users")
 @Getter
 @Setter
-@ToString
+@ToString(exclude = {"imageResource", "skills", "ads", "chatsAsSender", "chatsAsRecipient"})
 @EqualsAndHashCode(of = {"id", "email"}, callSuper = false)
 @Builder
 @NoArgsConstructor

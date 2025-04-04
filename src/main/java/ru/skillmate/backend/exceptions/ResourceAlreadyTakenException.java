@@ -29,4 +29,8 @@ public class ResourceAlreadyTakenException extends RuntimeException{
     public static ResourceAlreadyTakenException reviewWithReviewerAndRecipientAlreadyExists(Long reviewerId, Long recipientId) {
         return new ResourceAlreadyTakenException("Review with reviewerId %s and recipientId %s does already exists".formatted(reviewerId, recipientId));
     }
+
+    public static ResourceAlreadyTakenException likeAlreadyExists(Long postId, Long userId) {
+        return new ResourceAlreadyTakenException("User with id %s has already liked the post with id %s".formatted(userId, postId));
+    }
 }

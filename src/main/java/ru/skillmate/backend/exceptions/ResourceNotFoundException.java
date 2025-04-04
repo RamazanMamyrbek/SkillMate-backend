@@ -60,4 +60,12 @@ public class ResourceNotFoundException extends RuntimeException{
     public static ResourceNotFoundException postNotFound(Long postId) {
         return new ResourceNotFoundException("Post with id %s was not found".formatted(postId));
     }
+
+    public static ResourceNotFoundException commentNotFound(Long commentId) {
+        return new ResourceNotFoundException("Comment with id %s was not found".formatted(commentId));
+    }
+
+    public static ResourceNotFoundException postLikeNotFound(Long postId, Long userId) {
+        return new ResourceNotFoundException("Like by user with id %s and post with id %s was not found".formatted(postId, userId));
+    }
 }

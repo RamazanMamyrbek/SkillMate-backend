@@ -136,6 +136,70 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    @GetMapping(value = "/{postId}/likes")
+    @Operation(
+            summary = "Get likes count for post"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resource was get successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<Integer> getLikesCount(@PathVariable Long postId) {
+        Integer likesCount = postService.getLikesCount(postId);
+        return ResponseEntity.ok(likesCount);
+    }
+
+    @PostMapping(value = "/{postId}/likes")
+    @Operation(
+            summary = "Like a post"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Resource was created successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<Void> likePost(@PathVariable Long postId,
+                                         Principal principal) {
+        postService.likePost(postId, principal.getName());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @DeleteMapping(value = "/{postId}/remove-like")
+    @Operation(
+            summary = "Remove a like from post"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Resource was deleted successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<Void> unlikePost(@PathVariable Long postId,
+                                           Principal principal) {
+        postService.unlikePost(postId, principal.getName());
+        return ResponseEntity.noContent().build();
+    }
 
 
 }
