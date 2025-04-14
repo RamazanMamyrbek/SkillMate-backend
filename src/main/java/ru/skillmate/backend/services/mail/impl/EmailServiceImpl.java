@@ -5,6 +5,7 @@ import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -13,6 +14,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 import ru.skillmate.backend.entities.ads.Ad;
 import ru.skillmate.backend.entities.ads.ExchangeRequest;
+import ru.skillmate.backend.entities.users.ResetPasswordToken;
 import ru.skillmate.backend.entities.users.Users;
 import ru.skillmate.backend.services.mail.EmailService;
 
@@ -43,6 +45,33 @@ public class EmailServiceImpl implements EmailService {
         } catch (Exception e) {
             handleMailException(e);
         }
+    }
+
+    @Override
+    @Async
+    public void sendResetPasswordLink(String email, ResetPasswordToken token) {
+        try {
+            String subject = "Reset password request";
+            sendResetPasswordLink(subject, email, token);
+        } catch (Exception e) {
+            handleMailException(e);
+        }
+    }
+
+    private void sendResetPasswordLink(String subject, String email, ResetPasswordToken token) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        String text = String.format(
+                "You have requested to reset your password on Skillmate.\n\n" +
+                        "Please follow the link below to set a new password:\n%s\n\n" +
+                        "This link will be valid for 15 minutes.\n\n" +
+                        "If you did not request a password reset, you can safely ignore this email.",
+                token.getLink()
+        );
+        message.setSubject(subject);
+        message.setTo(email);
+        message.setText(text);
+        message.setFrom("noreply@skillmate.com");
+        javaMailSender.send(message);
     }
 
     private void sendHtmlExchangeRequestNotification(String subject, Users requester, Ad ad, ExchangeRequest exchangeRequest) throws MessagingException {

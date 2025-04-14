@@ -17,5 +17,9 @@ public interface UsersAuthService {
     void logout(HttpServletResponse response);
 
     void resendCode(String email);
+
+    void sendResetPasswordLink(String email);
+
+    void resetPasswordByToken(String token, String newPassword);
 }
 

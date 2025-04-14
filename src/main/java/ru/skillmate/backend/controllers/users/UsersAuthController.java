@@ -5,12 +5,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.skillmate.backend.annotations.validation.Trimmed;
+import ru.skillmate.backend.dto.common.StringResponse;
 import ru.skillmate.backend.dto.users.request.ConfirmEmailRequestDto;
 import ru.skillmate.backend.dto.users.request.PendingUserRequestDto;
 import ru.skillmate.backend.dto.users.request.UserLoginRequestDto;
@@ -61,5 +64,22 @@ public class UsersAuthController {
     public ResponseEntity<Void> logout(HttpServletResponse response) {
         userAuthService.logout(response);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/forgot-password")
+    @Operation(summary = "Endpoint for forgot password")
+    public ResponseEntity<StringResponse> forgotPassword(@RequestParam @Email(message = "Invalid email format") String email) {
+        userAuthService.sendResetPasswordLink(email);
+        return ResponseEntity.ok(new StringResponse("Reset password link was sent"));
+    }
+
+    @PatchMapping("/reset-password")
+    @Operation(summary = "Endpoint for changing password by token")
+    public ResponseEntity<StringResponse> resetPassword(@RequestParam String token,
+                                                 @RequestParam @NotBlank(message = "Password should not be blank")
+                                                 @Size(min = 6, message = "Password should contain at least 6 characters")
+                                                 @Trimmed String newPassword) {
+        userAuthService.resetPasswordByToken(token, newPassword);
+        return ResponseEntity.ok(new StringResponse("Password was successfully changed"));
     }
 }

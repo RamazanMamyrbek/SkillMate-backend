@@ -41,4 +41,5 @@ public interface UsersService {
     List<UserProfileResponseDto> getAllUsersExceptSelf(Principal principal);
 
     List<UserProfileResponseDto> getAllUsers();
+
 }

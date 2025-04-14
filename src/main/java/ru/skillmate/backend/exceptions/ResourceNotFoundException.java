@@ -68,4 +68,8 @@ public class ResourceNotFoundException extends RuntimeException{
     public static ResourceNotFoundException postLikeNotFound(Long postId, Long userId) {
         return new ResourceNotFoundException("Like by user with id %s and post with id %s was not found".formatted(postId, userId));
     }
+
+    public static ResourceNotFoundException resetPasswordTokenNotFound(String token) {
+        return new ResourceNotFoundException("Reset password token %s was not found".formatted(token));
+    }
 }
