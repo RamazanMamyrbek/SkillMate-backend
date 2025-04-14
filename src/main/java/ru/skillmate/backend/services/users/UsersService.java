@@ -42,4 +42,5 @@ public interface UsersService {
 
     List<UserProfileResponseDto> getAllUsers();
 
+    void changePassword(String email, String newPassword);
 }

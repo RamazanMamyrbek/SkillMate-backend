@@ -2,6 +2,8 @@ package ru.skillmate.backend.services.users.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +31,7 @@ public class UsersServiceImpl implements UsersService {
     private final PendingUserRepository pendingUserRepository;
     private final UsersMapper usersMapper;
     private final ResourceService resourceService;
+    private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @Value("${minio.folders.profileImages}")
     private String folderProfileImages;
 
@@ -114,6 +117,14 @@ public class UsersServiceImpl implements UsersService {
                 .stream()
                 .map(usersMapper::userToUserResponseDto)
                 .toList();
+    }
+
+    @Override
+    @Transactional
+    public void changePassword(String email, String newPassword) {
+        Users user = getUserByEmail(email);
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
     }
 
     @Override
