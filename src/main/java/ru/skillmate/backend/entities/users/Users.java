@@ -11,9 +11,7 @@ import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Table(name = "users")
@@ -76,6 +74,20 @@ public class Users extends BaseEntity implements UserDetails {
 
     @OneToMany(mappedBy = "recipient")
     private List<Chat> chatsAsRecipient;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_subscriptions",
+            joinColumns = @JoinColumn(name = "follower_id"),
+            inverseJoinColumns = @JoinColumn(name = "followed_id"),
+            uniqueConstraints = @UniqueConstraint(name = "uk_user_subscription_unique",
+            columnNames = {"follower_id", "followed_id"})
+    )
+    private Set<Users> following = new HashSet<>();
+
+    @ManyToMany(mappedBy = "following")
+    private Set<Users> followers = new HashSet<>();
+
 
     @Transient
     public boolean isUserOnline() {

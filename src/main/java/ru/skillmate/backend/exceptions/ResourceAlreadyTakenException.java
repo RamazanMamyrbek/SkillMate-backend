@@ -33,4 +33,8 @@ public class ResourceAlreadyTakenException extends RuntimeException{
     public static ResourceAlreadyTakenException likeAlreadyExists(Long postId, Long userId) {
         return new ResourceAlreadyTakenException("User with id %s has already liked the post with id %s".formatted(userId, postId));
     }
+
+    public static ResourceAlreadyTakenException userAlreadyFollowed(Long userId, Long followingUserId) {
+        return new ResourceAlreadyTakenException("User with id %s has followed user with id %s already".formatted(userId, followingUserId));
+    }
 }

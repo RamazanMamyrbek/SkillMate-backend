@@ -72,4 +72,8 @@ public class ResourceNotFoundException extends RuntimeException{
     public static ResourceNotFoundException resetPasswordTokenNotFound(String token) {
         return new ResourceNotFoundException("Reset password token %s was not found".formatted(token));
     }
+
+    public static ResourceNotFoundException followerNotFound(Long userId, Long followingUserId) {
+        return new ResourceNotFoundException("User with id %s does not follow the user with id %s".formatted(userId, followingUserId));
+    }
 }

@@ -12,6 +12,7 @@ import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.users.PendingUser;
 import ru.skillmate.backend.entities.users.Users;
+import ru.skillmate.backend.exceptions.IllegalArgumentException;
 import ru.skillmate.backend.exceptions.ResourceAlreadyTakenException;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.mappers.users.UsersMapper;
@@ -22,6 +23,7 @@ import ru.skillmate.backend.services.users.UsersService;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -125,6 +127,56 @@ public class UsersServiceImpl implements UsersService {
         Users user = getUserByEmail(email);
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
+    }
+
+    @Override
+    public List<UserProfileResponseDto> getAllFollowings(Long userId) {
+        Users user = getUserById(userId);
+        return user.getFollowing().stream()
+                .map(usersMapper::userToUserResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<UserProfileResponseDto> getAllFollowers(Long userId) {
+        Users user = getUserById(userId);
+        return user.getFollowers().stream()
+                .map(usersMapper::userToUserResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void followUser(String email, Long followingUserId) {
+        Users user = getUserByEmail(email);
+        Users followingUser = getUserById(followingUserId);
+        if(user.equals(followingUser)) {
+            throw IllegalArgumentException.usersCannotFollowThemselves();
+        }
+        if(followingUser.getFollowers().contains(user)|| user.getFollowing().contains(followingUser)) {
+            throw ResourceAlreadyTakenException.userAlreadyFollowed(user.getId(), followingUser.getId());
+        }
+        user.getFollowing().add(followingUser);
+        followingUser.getFollowers().add(user);
+        userRepository.save(user);
+        userRepository.save(followingUser);
+    }
+
+    @Override
+    @Transactional
+    public void unfollowUser(String email, Long followingUserId) {
+        Users user = getUserByEmail(email);
+        Users followingUser = getUserById(followingUserId);
+        if(user.equals(followingUser)) {
+            throw IllegalArgumentException.usersCannotFollowThemselves();
+        }
+        if(!followingUser.getFollowers().contains(user) || !user.getFollowing().contains(followingUser)) {
+            throw ResourceNotFoundException.followerNotFound(user.getId(), followingUser.getId());
+        }
+        user.getFollowing().remove(followingUser);
+        followingUser.getFollowers().remove(user);
+        userRepository.save(user);
+        userRepository.save(followingUser);
     }
 
     @Override
