@@ -1,6 +1,8 @@
 package ru.skillmate.backend.services.posts;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.dto.posts.response.CommentResponseDto;
 import ru.skillmate.backend.dto.posts.response.PostResponseDto;
 
@@ -17,7 +19,7 @@ public interface PostService {
 
     void deletePost(Long postId, String email);
 
-    List<CommentResponseDto> getAllComments(Long postId);
+    PageResponseDto<CommentResponseDto> getAllComments(Long postId, PageRequest pageRequest);
 
     CommentResponseDto createComment(Long postId, String text, String email);
 

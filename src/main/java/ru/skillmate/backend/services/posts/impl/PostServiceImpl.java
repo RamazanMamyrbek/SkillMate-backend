@@ -2,11 +2,13 @@ package ru.skillmate.backend.services.posts.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.dto.posts.response.CommentResponseDto;
 import ru.skillmate.backend.dto.posts.response.PostResponseDto;
 import ru.skillmate.backend.entities.posts.Comment;
@@ -112,12 +114,19 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<CommentResponseDto> getAllComments(Long postId) {
+    public PageResponseDto<CommentResponseDto> getAllComments(Long postId, PageRequest pageRequest) {
         Post post = getPostById(postId);
-        List<Comment> comments = commentRepository.findAllByPost(post);
-        return comments.stream()
+        Page<Comment> comments = commentRepository.findAllByPost(post, pageRequest);
+        List<CommentResponseDto> responseDtoList = comments.getContent().stream()
                 .map(postMapper::toCommentResponseDto)
                 .toList();
+        return new PageResponseDto<>(
+                responseDtoList,
+                comments.getNumber() + 1,
+                comments.getTotalPages(),
+                comments.getTotalElements(),
+                comments.getSize()
+        );
     }
 
     @Override

@@ -9,10 +9,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
 import ru.skillmate.backend.dto.posts.response.CommentResponseDto;
 import ru.skillmate.backend.dto.posts.response.PostResponseDto;
@@ -40,8 +42,10 @@ public class CommentController {
                     schema = @Schema(implementation = ErrorResponseDto.class)
             ))
     })
-    public ResponseEntity<List<CommentResponseDto>> getAllComments(@PathVariable Long postId) {
-        List<CommentResponseDto> responseDtoList = postService.getAllComments(postId);
+    public ResponseEntity<PageResponseDto<CommentResponseDto>> getAllComments(@RequestParam(defaultValue = "1") int page,
+                                                                   @RequestParam(defaultValue = "10") int size,
+                                                                   @PathVariable Long postId) {
+        PageResponseDto<CommentResponseDto> responseDtoList = postService.getAllComments(postId, PageRequest.of(page - 1, size));
         return ResponseEntity.ok(responseDtoList);
     }
 
