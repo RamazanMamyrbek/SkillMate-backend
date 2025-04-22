@@ -1,7 +1,5 @@
 package ru.skillmate.backend.exceptions;
 
-import ru.skillmate.backend.entities.users.Users;
-
 public class IllegalArgumentException extends RuntimeException{
     public IllegalArgumentException(String message) {
         super(message);
@@ -13,5 +11,9 @@ public class IllegalArgumentException extends RuntimeException{
 
     public static IllegalArgumentException userCannotRateThemselves() {
         return new IllegalArgumentException("Users cannot create a review for themselves");
+    }
+
+    public static IllegalArgumentException usersCannotFollowThemselves() {
+        return new IllegalArgumentException("Users cannot follow themselves");
     }
 }
