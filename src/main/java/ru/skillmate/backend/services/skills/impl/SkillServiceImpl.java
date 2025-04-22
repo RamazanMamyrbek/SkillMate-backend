@@ -11,6 +11,7 @@ import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 import ru.skillmate.backend.entities.skills.enums.SkillLevel;
 import ru.skillmate.backend.entities.users.Users;
+import ru.skillmate.backend.exceptions.ResourceAlreadyTakenException;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.exceptions.ResourcesNotMatchingException;
 import ru.skillmate.backend.mappers.skills.SkillMapper;
@@ -21,6 +22,7 @@ import ru.skillmate.backend.services.users.UsersService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -60,6 +62,9 @@ public class SkillServiceImpl implements SkillService {
     @Transactional
     public SkillResponseDto createSkill(Long userId, String name, String description, String level, List<MultipartFile> achievements, String email) {
         Users user = (Users) usersService.getUserByUsername(email);
+        if(skillRepository.existsByNameAndUser(name, user)) {
+            throw ResourceAlreadyTakenException.userAlreadyHasSkill(user.getId(), name);
+        }
         Skill skill = Skill
                 .builder()
                 .name(name)
@@ -78,6 +83,10 @@ public class SkillServiceImpl implements SkillService {
     public SkillResponseDto editSkill(Long userId, Long skillId, String name, String description, String level, List<MultipartFile> achievements, String email) {
         Skill skill = getSkillById(skillId);
         Users user = (Users) usersService.getUserByUsername(email);
+        Optional<Skill> skillByNameAndUser = skillRepository.findByNameAndUser(name, user);
+        if(skillByNameAndUser.isPresent() && !skillByNameAndUser.get().equals(skill)) {
+            throw ResourceAlreadyTakenException.userAlreadyHasSkill(user.getId(), name);
+        }
         checkSkillBelongsToUser(skill, user);
         skill.setName(name);
         skill.setDescription(description);

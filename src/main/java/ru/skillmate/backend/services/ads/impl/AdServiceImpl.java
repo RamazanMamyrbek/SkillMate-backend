@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import ru.skillmate.backend.dto.ads.response.AdResponseDto;
 import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.entities.ads.Ad;
+import ru.skillmate.backend.entities.ads.UserAdView;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 import ru.skillmate.backend.entities.users.Users;
@@ -18,12 +19,14 @@ import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.exceptions.ResourcesNotMatchingException;
 import ru.skillmate.backend.mappers.ads.AdMapper;
 import ru.skillmate.backend.repositories.ads.AdRepository;
+import ru.skillmate.backend.repositories.ads.UserAdViewRepository;
 import ru.skillmate.backend.services.ads.AdService;
 import ru.skillmate.backend.services.resources.ResourceService;
 import ru.skillmate.backend.services.users.UsersService;
 import ru.skillmate.backend.spec.AdSpecifications;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ import java.util.List;
 public class AdServiceImpl implements AdService {
     private final AdRepository adRepository;
     private final ResourceService resourceService;
+    private final UserAdViewRepository userAdViewRepository;
     private final UsersService usersService;
     private final AdMapper adMapper;
     @Value("${minio.folders.adImages}")
@@ -54,9 +58,23 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
+    public List<AdResponseDto> getRecommendationsForUser(String email) {
+        Users user = usersService.getUserByEmail(email);
+        List<UserAdView> viewedAds = userAdViewRepository.findAllByUser(user);
+        List<String> recommendedSkills = viewedAds.stream().map(UserAdView::getAd)
+                .map(Ad::getSkillName)
+                .distinct()
+                .toList();
+        List<Ad> recommendedAds = adRepository.findTop20BySkillNameInAndUserIdNot(recommendedSkills, user.getId());
+        return recommendedAds.stream()
+                .map(adMapper::mapToResponseDto)
+                .toList();
+    }
+
+    @Override
     @Transactional
     public AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email) {
-        Users user = usersService.getUserById(userId);
+        Users user = usersService.getUserByEmail(email);
         checkSkillNameAndUser(skillName, user, email);
         resourceService.checkImage(imageResource);
         Resource savedImageResource = resourceService.saveResource(imageResource, folderAdsImages);
@@ -74,8 +92,19 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public AdResponseDto getAdResponseDtoById(Long adId) {
-        return adMapper.mapToResponseDto(getAdById(adId));
+    @Transactional
+    public AdResponseDto getAdResponseDtoById(Long adId, String email) {
+        Users user = usersService.getUserByEmail(email);
+        Ad ad = getAdById(adId);
+        if(!userAdViewRepository.existsByUserAndAd(user, ad)) {
+            UserAdView viewedAd = UserAdView
+                    .builder()
+                    .user(user)
+                    .ad(ad)
+                    .build();
+            userAdViewRepository.save(viewedAd);
+        }
+        return adMapper.mapToResponseDto(ad);
     }
 
     @Override

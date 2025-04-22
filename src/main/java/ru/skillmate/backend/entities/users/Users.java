@@ -6,6 +6,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skillmate.backend.entities.BaseEntity;
 import ru.skillmate.backend.entities.ads.Ad;
+import ru.skillmate.backend.entities.ads.UserAdView;
 import ru.skillmate.backend.entities.chats.Chat;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
@@ -64,8 +65,12 @@ public class Users extends BaseEntity implements UserDetails {
     private List<Skill> skills = new ArrayList<>();
 
     @Builder.Default
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Ad> ads = new ArrayList<>();
+
+    @Builder.Default
+    @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private List<UserAdView> viewedAds = new ArrayList<>();
 
     private LocalDateTime lastSeen;
 

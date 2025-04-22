@@ -79,8 +79,9 @@ public class AdController {
                     schema = @Schema(implementation = ErrorResponseDto.class)
             ))
     })
-    public ResponseEntity<AdResponseDto> getAdById(@PathVariable Long adId) {
-        AdResponseDto responseDto = adService.getAdResponseDtoById(adId);
+    public ResponseEntity<AdResponseDto> getAdById(@PathVariable Long adId,
+                                                   Principal principal) {
+        AdResponseDto responseDto = adService.getAdResponseDtoById(adId, principal.getName());
         return ResponseEntity.ok().body(responseDto);
     }
 
@@ -158,6 +159,23 @@ public class AdController {
     public ResponseEntity<Void> deleteAd(@PathVariable Long adId, Principal principal) {
         adService.deleteAd(adId, principal.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Get recommendation ads for user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ads were get successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<List<AdResponseDto>> getRecommendations(Principal principal) {
+        List<AdResponseDto> responseDtoList = adService.getRecommendationsForUser(principal.getName());
+        return ResponseEntity.ok(responseDtoList);
     }
 
 }

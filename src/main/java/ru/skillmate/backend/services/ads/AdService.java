@@ -12,7 +12,7 @@ public interface AdService {
 
     AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email);
 
-    AdResponseDto getAdResponseDtoById(Long adId);
+    AdResponseDto getAdResponseDtoById(Long adId, String email);
 
     Ad getAdById(Long adId);
 
@@ -21,4 +21,6 @@ public interface AdService {
     void deleteAd(Long adId, String email);
 
     PageResponseDto<AdResponseDto> searchAds(PageRequest pageRequest, String searchValue, List<String> country, List<String> city, List<String> level);
+
+    List<AdResponseDto> getRecommendationsForUser(String email);
 }

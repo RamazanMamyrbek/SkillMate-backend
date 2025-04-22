@@ -37,4 +37,8 @@ public class ResourceAlreadyTakenException extends RuntimeException{
     public static ResourceAlreadyTakenException userAlreadyFollowed(Long userId, Long followingUserId) {
         return new ResourceAlreadyTakenException("User with id %s has followed user with id %s already".formatted(userId, followingUserId));
     }
+
+    public static ResourceAlreadyTakenException userAlreadyHasSkill(Long userId, String name) {
+        return new ResourceAlreadyTakenException("User with id %s already has skill with name %s".formatted(userId, name));
+    }
 }
