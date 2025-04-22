@@ -7,8 +7,11 @@ import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.enums.SkillLevel;
 import ru.skillmate.backend.entities.users.Users;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@Table(name = "ads")
+@Table(name = "ads", uniqueConstraints = @UniqueConstraint(columnNames = {"skill_name", "user_id"}))
 @Getter
 @Setter
 @ToString(exclude = {"user"})
@@ -20,6 +23,8 @@ public class Ad extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    private String title;
 
     @Column(name = "skill_name")
     private String skillName;
@@ -41,4 +46,8 @@ public class Ad extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private Users user;
+
+    @Builder.Default
+    @OneToMany(mappedBy = "ad", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<UserAdView> views = new ArrayList<>();
 }

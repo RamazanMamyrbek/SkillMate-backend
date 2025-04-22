@@ -104,7 +104,7 @@ public class AdController {
     public ResponseEntity<AdResponseDto> createAd(@RequestParam Long userId,
                                                   @RequestParam @NotBlank String skillName,
                                                   @RequestParam @NotBlank @Size(min = 20) String description,
-                                                  @RequestParam MultipartFile imageResource,
+                                                  @RequestParam(required = false) MultipartFile imageResource,
                                                   Principal principal) {
         AdResponseDto response = adService.createAd(userId, skillName, description, imageResource, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
@@ -163,7 +163,7 @@ public class AdController {
 
     @GetMapping(value = "/recommendations", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
-            summary = "Get recommendation ads for user"
+            summary = "Get recommended ads for user"
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ads were get successfully"),

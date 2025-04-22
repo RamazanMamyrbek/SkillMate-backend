@@ -17,11 +17,11 @@ public interface AdMapper {
 
     @Named("mapResourceToId")
     default Long mapResourceToId(Resource resource) {
-        return resource.getId();
+        return resource != null ? resource.getId() : null;
     }
 
     @Named("mapUserToId")
     default Long mapUserToId(Users user) {
-        return user.getId();
+        return user != null ? user.getId() : null;
     }
 }

@@ -41,4 +41,8 @@ public class ResourceAlreadyTakenException extends RuntimeException{
     public static ResourceAlreadyTakenException userAlreadyHasSkill(Long userId, String name) {
         return new ResourceAlreadyTakenException("User with id %s already has skill with name %s".formatted(userId, name));
     }
+
+    public static ResourceAlreadyTakenException adAlreadyExistsByNameAndUser(String skillName, Long userId) {
+        return new ResourceAlreadyTakenException("Ad with skillName %s and user id %s already exists".formatted(skillName, userId));
+    }
 }

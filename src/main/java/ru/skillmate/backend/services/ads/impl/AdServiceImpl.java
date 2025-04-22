@@ -15,6 +15,7 @@ import ru.skillmate.backend.entities.ads.UserAdView;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.skills.Skill;
 import ru.skillmate.backend.entities.users.Users;
+import ru.skillmate.backend.exceptions.ResourceAlreadyTakenException;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.exceptions.ResourcesNotMatchingException;
 import ru.skillmate.backend.mappers.ads.AdMapper;
@@ -26,6 +27,7 @@ import ru.skillmate.backend.services.users.UsersService;
 import ru.skillmate.backend.spec.AdSpecifications;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,18 +78,23 @@ public class AdServiceImpl implements AdService {
     public AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email) {
         Users user = usersService.getUserByEmail(email);
         checkSkillNameAndUser(skillName, user, email);
-        resourceService.checkImage(imageResource);
-        Resource savedImageResource = resourceService.saveResource(imageResource, folderAdsImages);
+        if(adRepository.existsBySkillNameAndUser(skillName, user)) {
+            throw ResourceAlreadyTakenException.adAlreadyExistsByNameAndUser(skillName, user.getId());
+        }
         Ad ad = Ad
                 .builder()
                 .skillName(skillName)
                 .description(description)
-                .imageResource(savedImageResource)
                 .country(user.getCountry())
                 .city(user.getCity())
                 .level(user.getSkills().stream().filter(skill -> skill.getName().equals(skillName)).findFirst().get().getLevel())
                 .user(user)
                 .build();
+        if(imageResource != null && !imageResource.isEmpty()) {
+            resourceService.checkImage(imageResource);
+            Resource savedImageResource = resourceService.saveResource(imageResource, folderAdsImages);
+            ad.setImageResource(savedImageResource);
+        }
         return adMapper.mapToResponseDto(adRepository.save(ad));
     }
 
@@ -117,14 +124,22 @@ public class AdServiceImpl implements AdService {
     public AdResponseDto editAd(Long adId, Long userId, String skillName, String description, MultipartFile imageResource, String email) {
         Ad ad = getAdById(adId);
         Users user = usersService.getUserById(userId);
+        Optional<Ad> adByName = adRepository.findBySkillNameAndUser(skillName, user);
         checkAdBelongsToUser(ad, user);
         checkSkillNameAndUser(skillName, user, email);
+        if(adByName.isPresent() && !adByName.get().equals(ad)) {
+            throw ResourceAlreadyTakenException.adAlreadyExistsByNameAndUser(skillName, user.getId());
+        }
         ad.setSkillName(skillName);
         ad.setDescription(description);
         if(imageResource != null && !imageResource.isEmpty()) {
             resourceService.checkImage(imageResource);
             Resource savedImageResource = ad.getImageResource();
-            savedImageResource = resourceService.updateResource(savedImageResource.getId(), imageResource);
+            if (savedImageResource != null) {
+                savedImageResource = resourceService.updateResource(savedImageResource.getId(), imageResource);
+            } else {
+                savedImageResource = resourceService.saveResource(imageResource, folderAdsImages);
+            }
             ad.setImageResource(savedImageResource);
         }
         return adMapper.mapToResponseDto(ad);
