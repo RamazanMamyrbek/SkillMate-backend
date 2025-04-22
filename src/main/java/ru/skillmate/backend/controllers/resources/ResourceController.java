@@ -8,10 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.skillmate.backend.dto.resources.response.FileDto;
 import ru.skillmate.backend.services.resources.ResourceService;
 
@@ -25,6 +22,8 @@ import java.nio.charset.StandardCharsets;
 @Tag(name = "ResourceController", description = "Endpoints for resources")
 public class ResourceController {
     private final ResourceService resourceService;
+
+
     @GetMapping("/{resourceId}")
     public ResponseEntity<InputStreamResource> getResource(@PathVariable("resourceId") Long resourceId) {
         FileDto fileDto = resourceService.getFileDtoById(resourceId);

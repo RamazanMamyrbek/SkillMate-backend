@@ -115,12 +115,18 @@ public class UsersAuthServiceImpl implements UsersAuthService {
         Users user = usersService.getUserByEmail(email);
         String tokenStr = UUID.randomUUID().toString();
         String link = applicationFrontendUrl + "/reset-password?token=" + tokenStr;
-        ResetPasswordToken token = ResetPasswordToken
-                .builder()
-                .user(user)
-                .token(tokenStr)
-                .link(link)
-                .build();
+        ResetPasswordToken token;
+        if(resetPasswordTokenRepository.existsByUser(user)) {
+            token = resetPasswordTokenRepository.findByUser(user).get();
+        } else {
+            token = ResetPasswordToken
+                    .builder()
+                    .user(user)
+                    .token(tokenStr)
+                    .link(link)
+                    .build();
+            resetPasswordTokenRepository.save(token);
+        }
         resetPasswordTokenRepository.save(token);
         emailService.sendResetPasswordLink(email, token);
     }
