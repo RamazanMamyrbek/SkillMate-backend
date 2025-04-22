@@ -1,7 +1,9 @@
 package ru.skillmate.backend.services.users;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.dto.users.request.ProfileEditRequestDto;
 import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.entities.users.PendingUser;
@@ -51,4 +53,6 @@ public interface UsersService {
     void followUser(String email, Long followingUserId);
 
     void unfollowUser(String name, Long userId);
+
+    PageResponseDto<UserProfileResponseDto> searchUsers(PageRequest pageRequest, String name);
 }

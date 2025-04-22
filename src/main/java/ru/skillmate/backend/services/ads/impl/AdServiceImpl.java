@@ -46,7 +46,7 @@ public class AdServiceImpl implements AdService {
 
         return new PageResponseDto<>(
                 content,
-                adPage.getNumber(),
+                adPage.getNumber()+1,
                 adPage.getTotalPages(),
                 adPage.getTotalElements(),
                 adPage.getSize()

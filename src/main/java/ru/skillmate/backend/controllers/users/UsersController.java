@@ -7,11 +7,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.dto.errors.ErrorResponseDto;
 import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.services.users.UsersService;
@@ -121,8 +122,27 @@ public class UsersController {
             ))
     })
     public ResponseEntity<Void> unfollowUser(@PathVariable Long userId,
-                                           Principal principal) {
+                                             Principal principal) {
         usersService.unfollowUser(principal.getName(), userId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Search users by name"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resources were get successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<PageResponseDto<UserProfileResponseDto>> searchUsers(@RequestParam(defaultValue = "1") int page,
+                                                                               @RequestParam(defaultValue = "10") int size,
+                                                                               @RequestParam(required = false) String name) {
+        PageResponseDto<UserProfileResponseDto> responseDtoList = usersService.searchUsers(PageRequest.of(page-1, size), name);
+        return ResponseEntity.ok(responseDtoList);
     }
 }

@@ -2,11 +2,14 @@ package ru.skillmate.backend.services.users.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import ru.skillmate.backend.dto.common.PageResponseDto;
 import ru.skillmate.backend.dto.users.request.ProfileEditRequestDto;
 import ru.skillmate.backend.dto.users.response.UserProfileResponseDto;
 import ru.skillmate.backend.entities.resources.Resource;
@@ -177,6 +180,22 @@ public class UsersServiceImpl implements UsersService {
         followingUser.getFollowers().remove(user);
         userRepository.save(user);
         userRepository.save(followingUser);
+    }
+
+    @Override
+    public PageResponseDto<UserProfileResponseDto> searchUsers(PageRequest pageRequest, String name) {
+        name = (name==null || name.isBlank()) ? "" : name.trim();
+        Page<Users> users = userRepository.findAllByFullNameContainingIgnoreCase(name, pageRequest);
+        List<UserProfileResponseDto> responseDtoList = users.getContent().stream()
+                .map(usersMapper::userToUserResponseDto)
+                .toList();
+        return new PageResponseDto<>(
+                responseDtoList,
+                users.getNumber()+1,
+                users.getTotalPages(),
+                users.getTotalElements(),
+                users.getSize()
+        );
     }
 
     @Override
