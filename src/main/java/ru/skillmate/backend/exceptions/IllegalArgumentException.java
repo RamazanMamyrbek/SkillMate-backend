@@ -16,4 +16,8 @@ public class IllegalArgumentException extends RuntimeException{
     public static IllegalArgumentException usersCannotFollowThemselves() {
         return new IllegalArgumentException("Users cannot follow themselves");
     }
+
+    public static IllegalArgumentException passwordInvalid() {
+        return new IllegalArgumentException("Invalid password");
+    }
 }

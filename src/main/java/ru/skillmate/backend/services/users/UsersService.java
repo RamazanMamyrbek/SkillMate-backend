@@ -44,7 +44,7 @@ public interface UsersService {
 
     List<UserProfileResponseDto> getAllUsers();
 
-    void changePassword(String email, String newPassword);
+    void changePassword(String email, String newPassword, String oldPassword);
 
     List<UserProfileResponseDto> getAllFollowings(Long userId);
 

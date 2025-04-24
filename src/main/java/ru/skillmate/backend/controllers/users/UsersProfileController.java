@@ -134,9 +134,12 @@ public class UsersProfileController {
     })
     public ResponseEntity<StringResponse> changePassword(Principal principal,
                                                          @RequestParam @NotBlank(message = "Password should not be blank")
+                                                         @Size(min = 6, message = "Password should contain at least 6 characters")
+                                                         @Trimmed String oldPassword,
+                                                         @RequestParam @NotBlank(message = "Password should not be blank")
                                                               @Size(min = 6, message = "Password should contain at least 6 characters")
                                                               @Trimmed String newPassword) {
-        usersService.changePassword(principal.getName(), newPassword);
+        usersService.changePassword(principal.getName(), newPassword, oldPassword);
         return ResponseEntity.ok(new StringResponse("Password was changed successfully"));
     }
 

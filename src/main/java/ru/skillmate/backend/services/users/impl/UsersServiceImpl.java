@@ -126,8 +126,11 @@ public class UsersServiceImpl implements UsersService {
 
     @Override
     @Transactional
-    public void changePassword(String email, String newPassword) {
+    public void changePassword(String email, String newPassword, String oldPassword) {
         Users user = getUserByEmail(email);
+        if(!passwordEncoder.matches(oldPassword, user.getPasswordHash())) {
+            throw IllegalArgumentException.passwordInvalid();
+        }
         user.setPasswordHash(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
