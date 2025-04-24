@@ -15,6 +15,7 @@ import ru.skillmate.backend.entities.chats.enums.MessageState;
 import ru.skillmate.backend.entities.chats.enums.MessageType;
 import ru.skillmate.backend.entities.resources.Resource;
 import ru.skillmate.backend.entities.users.Users;
+import ru.skillmate.backend.exceptions.FileException;
 import ru.skillmate.backend.exceptions.ResourceNotFoundException;
 import ru.skillmate.backend.mappers.chats.MessageMapper;
 import ru.skillmate.backend.repositories.chats.ChatRepository;
@@ -75,7 +76,7 @@ public class MessageService {
         message.setChat(chat);
         message.setSenderId(senderId);
         message.setReceiverId(recipientId);
-        message.setMessageType(MessageType.FILE);
+        message.setMessageType(getContentType(file));
         message.setMessageState(MessageState.SENT);
         message.setResourceId(resource.getId());
         message = messageRepository.save(message);
@@ -91,7 +92,6 @@ public class MessageService {
                 .build();
         notificationService.sentNotification(recipientId, notificationRequest);
     }
-
 
 
     public List<MessageResponseDto> findChatMessages(String chatId) {
@@ -115,6 +115,16 @@ public class MessageService {
                 .type(NotificationType.SEEN)
                 .build();
         notificationService.sentNotification(recipientId, notificationRequest);
+    }
+
+    private MessageType getContentType(MultipartFile file) {
+        if(file == null || file.isEmpty()) {
+            throw new FileException("File is empty");
+        }else if(file.getContentType().equals("image/png") || file.getContentType().equals("image/jpeg")) {
+            return MessageType.IMAGE;
+        } else {
+            return MessageType.FILE;
+        }
     }
 
     private Long getSenderId(Chat chat, Principal principal) {
