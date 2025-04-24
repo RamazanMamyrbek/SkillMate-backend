@@ -1,5 +1,7 @@
 package ru.skillmate.backend.services.ads;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skillmate.backend.dto.ads.response.AdResponseDto;
@@ -10,13 +12,13 @@ import java.util.List;
 
 public interface AdService {
 
-    AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email);
+    AdResponseDto createAd(Long userId, String skillName, String title, String description, MultipartFile imageResource, String email);
 
     AdResponseDto getAdResponseDtoById(Long adId, String email);
 
     Ad getAdById(Long adId);
 
-    AdResponseDto editAd(Long adId, Long userId, String skillName, String description, MultipartFile imageResource, String name);
+    AdResponseDto editAd(Long adId, Long userId, String skillName, String title, String description, MultipartFile imageResource, String name);
 
     void deleteAd(Long adId, String email);
 

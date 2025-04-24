@@ -1,5 +1,7 @@
 package ru.skillmate.backend.services.ads.impl;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -28,7 +30,6 @@ import ru.skillmate.backend.spec.AdSpecifications;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -75,7 +76,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    public AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email) {
+    public AdResponseDto createAd(Long userId, String skillName, String title, String description, MultipartFile imageResource, String email) {
         Users user = usersService.getUserByEmail(email);
         checkSkillNameAndUser(skillName, user, email);
         if(adRepository.existsBySkillNameAndUser(skillName, user)) {
@@ -84,6 +85,7 @@ public class AdServiceImpl implements AdService {
         Ad ad = Ad
                 .builder()
                 .skillName(skillName)
+                .title(title)
                 .description(description)
                 .country(user.getCountry())
                 .city(user.getCity())
@@ -121,7 +123,7 @@ public class AdServiceImpl implements AdService {
 
     @Override
     @Transactional
-    public AdResponseDto editAd(Long adId, Long userId, String skillName, String description, MultipartFile imageResource, String email) {
+    public AdResponseDto editAd(Long adId, Long userId, String skillName, String title, String description, MultipartFile imageResource, String email) {
         Ad ad = getAdById(adId);
         Users user = usersService.getUserById(userId);
         Optional<Ad> adByName = adRepository.findBySkillNameAndUser(skillName, user);
@@ -131,6 +133,7 @@ public class AdServiceImpl implements AdService {
             throw ResourceAlreadyTakenException.adAlreadyExistsByNameAndUser(skillName, user.getId());
         }
         ad.setSkillName(skillName);
+        ad.setTitle(title);
         ad.setDescription(description);
         if(imageResource != null && !imageResource.isEmpty()) {
             resourceService.checkImage(imageResource);

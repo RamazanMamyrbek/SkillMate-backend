@@ -14,8 +14,23 @@ public class AdSpecifications {
             List<Predicate> predicates = new ArrayList<>();
 
             if (searchValue != null && !searchValue.isEmpty()) {
-                predicates.add(cb.like(cb.lower(root.get("skillName")), "%" + searchValue.toLowerCase() + "%"));
+                String lowered = searchValue.toLowerCase();
+                Predicate skillNameExact = cb.equal(cb.lower(root.get("skillName")), lowered);
+                Predicate titleStartsWith = cb.like(cb.lower(root.get("title")), lowered + "%");
+                Predicate titleContains = cb.like(cb.lower(root.get("title")), "%" + lowered + "%");
+                Predicate descriptionContains = cb.like(cb.lower(root.get("description")), "%" + lowered + "%");
+
+                // Объединяем в приоритетном порядке
+                Predicate searchPredicate = cb.or(
+                        skillNameExact,
+                        titleStartsWith,
+                        titleContains,
+                        descriptionContains
+                );
+
+                predicates.add(searchPredicate);
             }
+
             if (countries != null && !countries.isEmpty()) {
                 predicates.add(root.get("country").in(countries));
             }
@@ -25,6 +40,7 @@ public class AdSpecifications {
             if (levels != null && !levels.isEmpty()) {
                 predicates.add(root.get("level").in(levels.stream().map(SkillLevel::valueOf).toList()));
             }
+
             return cb.and(predicates.toArray(new Predicate[0]));
         };
     }
