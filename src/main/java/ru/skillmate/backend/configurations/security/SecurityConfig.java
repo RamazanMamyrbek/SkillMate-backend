@@ -38,11 +38,11 @@ public class SecurityConfig {
                     @Override
                     public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                         CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(Collections.singletonList("*"));
+                        config.setAllowedOrigins(Collections.singletonList("http://143.110.228.112:3000"));
                         config.setAllowedMethods(Collections.singletonList("*"));
-                        config.setAllowCredentials(false);
+                        config.setAllowCredentials(true);
                         config.setAllowedHeaders(Collections.singletonList("*"));
-                        config.setExposedHeaders(Arrays.asList("Authorization"));
+                        config.setExposedHeaders(List.of("Content-Disposition", "File-Name", "Authorization"));
                         config.setMaxAge(3600L);
                         return config;
                     }
