@@ -34,19 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(corsConfig -> corsConfig.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-                        CorsConfiguration config = new CorsConfiguration();
-                        config.setAllowedOrigins(List.of("http://143.110.228.112:3000", "http://localhost:3000", "http://213.109.146.203:3000"));
-                        config.setAllowedMethods(Collections.singletonList("*"));
-                        config.setAllowCredentials(true);
-                        config.setAllowedHeaders(Collections.singletonList("*"));
-                        config.setExposedHeaders(List.of("Content-Disposition", "File-Name", "Authorization"));
-                        config.setMaxAge(3600L);
-                        return config;
-                    }
-                }))
+                .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(
                         requestConfig -> requestConfig
                                 .requestMatchers( "/v3/api-docs/**","/swagger-ui/**", "/swagger-ui.html").permitAll()
@@ -72,6 +60,25 @@ public class SecurityConfig {
 //        corsConfigurationSource.registerCorsConfiguration("/**", configuration);
 //        return corsConfigurationSource;
 //    }
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOrigins(List.of(
+                "http://143.110.228.112:3000",
+                "http://localhost:3000",
+                "http://213.109.146.203:3000"
+        ));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Content-Disposition", "File-Name", "Authorization"));
+        config.setAllowCredentials(true);
+        config.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
