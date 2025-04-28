@@ -69,7 +69,7 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://213.109.146.203:3000"
         ));
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(List.of("*"));
         config.setAllowedHeaders(List.of("*"));
         config.setExposedHeaders(List.of("Content-Disposition", "File-Name", "Authorization"));
         config.setAllowCredentials(true);
