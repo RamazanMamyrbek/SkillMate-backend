@@ -15,16 +15,12 @@ public class AdSpecifications {
 
             if (searchValue != null && !searchValue.isEmpty()) {
                 String lowered = searchValue.toLowerCase();
-                Predicate skillNameExact = cb.equal(cb.lower(root.get("skillName")), lowered);
-                Predicate titleStartsWith = cb.like(cb.lower(root.get("title")), lowered + "%");
-                Predicate titleContains = cb.like(cb.lower(root.get("title")), "%" + lowered + "%");
+                Predicate skillNameContains = cb.like(cb.lower(root.get("skillName")), "%" + lowered + "%");
                 Predicate descriptionContains = cb.like(cb.lower(root.get("description")), "%" + lowered + "%");
 
                 // Объединяем в приоритетном порядке
                 Predicate searchPredicate = cb.or(
-                        skillNameExact,
-                        titleStartsWith,
-                        titleContains,
+                        skillNameContains,
                         descriptionContains
                 );
 

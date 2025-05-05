@@ -102,12 +102,11 @@ public class AdController {
             ))
     })
     public ResponseEntity<AdResponseDto> createAd(@RequestParam Long userId,
-                                                  @RequestParam @NotBlank String title,
                                                   @RequestParam @NotBlank String skillName,
                                                   @RequestParam @NotBlank @Size(min = 20) String description,
                                                   @RequestParam(required = false) MultipartFile imageResource,
                                                   Principal principal) {
-        AdResponseDto response = adService.createAd(userId, skillName, title, description, imageResource, principal.getName());
+        AdResponseDto response = adService.createAd(userId, skillName, description, imageResource, principal.getName());
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -133,12 +132,11 @@ public class AdController {
     })
     public ResponseEntity<AdResponseDto> createAd(@PathVariable Long adId,
                                                   @RequestParam Long userId,
-                                                  @RequestParam @NotBlank String title,
                                                   @RequestParam @NotBlank String skillName,
                                                   @RequestParam @NotBlank @Size(min = 20) String description,
                                                   @RequestParam(required = false) MultipartFile imageResource,
                                                   Principal principal) {
-        AdResponseDto response = adService.editAd(adId, userId, skillName, title, description, imageResource, principal.getName());
+        AdResponseDto response = adService.editAd(adId, userId, skillName, description, imageResource, principal.getName());
         return ResponseEntity.ok().body(response);
     }
 

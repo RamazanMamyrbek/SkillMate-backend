@@ -12,13 +12,13 @@ import java.util.List;
 
 public interface AdService {
 
-    AdResponseDto createAd(Long userId, String skillName, String title, String description, MultipartFile imageResource, String email);
+    AdResponseDto createAd(Long userId, String skillName, String description, MultipartFile imageResource, String email);
 
     AdResponseDto getAdResponseDtoById(Long adId, String email);
 
     Ad getAdById(Long adId);
 
-    AdResponseDto editAd(Long adId, Long userId, String skillName, String title, String description, MultipartFile imageResource, String name);
+    AdResponseDto editAd(Long adId, Long userId, String skillName, String description, MultipartFile imageResource, String name);
 
     void deleteAd(Long adId, String email);
 
