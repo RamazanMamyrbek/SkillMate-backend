@@ -37,7 +37,7 @@ jwt:
 
 # Minio config
 minio:
-  url: http://localhost:9000
+  url: ${MINIO_URL:http://localhost:9000}
   accessKey: minioadmin
   secretKey: minioadmin
   bucketName: projectbucket
