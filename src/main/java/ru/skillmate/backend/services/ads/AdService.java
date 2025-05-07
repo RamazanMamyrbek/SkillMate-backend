@@ -3,6 +3,7 @@ package ru.skillmate.backend.services.ads;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 import ru.skillmate.backend.dto.ads.response.AdResponseDto;
 import ru.skillmate.backend.dto.common.PageResponseDto;
@@ -25,4 +26,6 @@ public interface AdService {
     PageResponseDto<AdResponseDto> searchAds(PageRequest pageRequest, String searchValue, List<String> country, List<String> city, List<String> level);
 
     List<AdResponseDto> getRecommendationsForUser(String email);
+
+    List<AdResponseDto> getAdsByUserId(long userId);
 }

@@ -178,4 +178,19 @@ public class AdController {
         return ResponseEntity.ok(responseDtoList);
     }
 
+    @GetMapping(value = "/by-user-id/{userId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Get ads created by user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ads were get successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<List<AdResponseDto>> getAdsByUserId(@PathVariable("userId") long userId) {
+        return ResponseEntity.ok(adService.getAdsByUserId(userId));
+    }
 }

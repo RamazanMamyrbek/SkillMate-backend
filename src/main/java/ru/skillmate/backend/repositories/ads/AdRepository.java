@@ -19,4 +19,5 @@ public interface AdRepository extends JpaRepository<Ad, Long>, JpaSpecificationE
 
     Optional<Ad> findBySkillNameAndUser(String skillName, Users user);
 
+    List<Ad> findAllByUserId(long userId);
 }

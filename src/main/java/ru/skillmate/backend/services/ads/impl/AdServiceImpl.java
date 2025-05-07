@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -70,6 +71,13 @@ public class AdServiceImpl implements AdService {
                 .toList();
         List<Ad> recommendedAds = adRepository.findTop20BySkillNameInAndUserIdNot(recommendedSkills, user.getId());
         return recommendedAds.stream()
+                .map(adMapper::mapToResponseDto)
+                .toList();
+    }
+
+    @Override
+    public List<AdResponseDto> getAdsByUserId(long userId) {
+        return adRepository.findAllByUserId(userId).stream()
                 .map(adMapper::mapToResponseDto)
                 .toList();
     }

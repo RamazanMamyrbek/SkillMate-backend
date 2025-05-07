@@ -1,15 +1,6 @@
 version: '3.8'
 
 services:
-  skillmate-frontend:
-    build:
-      context: ../frontend/skillmate
-      dockerfile: Dockerfile
-    container_name: skillmate-frontend
-    depends_on:
-      - skillmate-backend
-    ports:
-      - "3000:3000"
   skillmate-db:
     image: postgres:15
     container_name: skillmate-db
