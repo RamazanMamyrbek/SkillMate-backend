@@ -157,6 +157,28 @@ public class PostController {
         return ResponseEntity.ok(likesCount);
     }
 
+    @GetMapping(value = "/{postId}/is-liked")
+    @Operation(
+            summary = "Determines is post liked by current user"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Resource was get successfully"),
+            @ApiResponse(responseCode = "400", description = "Bad request", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<Boolean> isLiked(@PathVariable Long postId,
+                                           Principal principal) {
+        boolean isLiked = postService.isLiked(postId, principal.getName());
+        return ResponseEntity.ok(isLiked);
+    }
+
     @PostMapping(value = "/{postId}/likes")
     @Operation(
             summary = "Like a post"

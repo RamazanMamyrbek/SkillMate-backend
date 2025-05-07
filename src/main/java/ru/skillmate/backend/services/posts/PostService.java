@@ -30,4 +30,6 @@ public interface PostService {
     void unlikePost(Long postId, String email);
 
     Integer getLikesCount(Long postId);
+
+    boolean isLiked(Long postId, String email);
 }

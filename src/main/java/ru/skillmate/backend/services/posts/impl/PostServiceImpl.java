@@ -186,6 +186,13 @@ public class PostServiceImpl implements PostService {
         return postLikeRepository.findAllByPost(post).size();
     }
 
+    @Override
+    public boolean isLiked(Long postId, String email) {
+        Users user = usersService.getUserByEmail(email);
+        Post post = getPostById(postId);
+        return postLikeRepository.existsByPostAndUser(post, user);
+    }
+
     private void checkComment(Comment comment, Post post, Users user) {
         if(!comment.getPost().equals(post)) {
             throw ResourcesNotMatchingException.commentDoesNotBelongToPost(comment.getId(), post.getId());
