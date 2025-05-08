@@ -2,6 +2,7 @@ package ru.skillmate.backend.repositories.ads;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import ru.skillmate.backend.dto.ads.response.ExchangeResponseDto;
 import ru.skillmate.backend.entities.ads.Ad;
 import ru.skillmate.backend.entities.ads.ExchangeRequest;
 import ru.skillmate.backend.entities.users.Users;
@@ -17,4 +18,6 @@ public interface ExchangeRequestRepository extends JpaRepository<ExchangeRequest
     List<ExchangeRequest> findAllByReceiver(Users receiver);
 
     boolean existsByIdAndRequester(Long requestId, Users requester);
+
+    List<ExchangeRequest> findAllByAdId(long adId);
 }

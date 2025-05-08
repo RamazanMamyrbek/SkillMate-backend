@@ -96,6 +96,14 @@ public class ExchangeRequestServiceImpl implements ExchangeRequestService {
         );
     }
 
+    @Override
+    public List<ExchangeResponseDto> getExchangeRequestsByAdId(long adId) {
+        return exchangeRequestRepository.findAllByAdId(adId)
+                .stream()
+                .map(exchangeRequestMapper::mapToResponseDto)
+                .toList();
+    }
+
     private ExchangeRequest getExchangeRequestById(Long requestId) {
         return exchangeRequestRepository.findById(requestId).orElseThrow(
                 () -> ResourceNotFoundException.exchangeRequestNotFoundById(requestId)

@@ -68,6 +68,23 @@ public class ExchangeRequestController {
         return ResponseEntity.ok(requests);
     }
 
+    @GetMapping(value = "/by-ad-id/{adId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(
+            summary = "Get exchange requests received for the user's ads",
+            description = "Retrieves all exchange requests that other users have left on the current user's ads"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Requests retrieved successfully"),
+            @ApiResponse(responseCode = "403", description = "Authorization error", content = @Content()),
+            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(
+                    mediaType = MediaType.APPLICATION_JSON_VALUE,
+                    schema = @Schema(implementation = ErrorResponseDto.class)
+            ))
+    })
+    public ResponseEntity<List<ExchangeResponseDto>> getExchangeRequestsByAdId(@PathVariable("adId") long adId) {
+        return ResponseEntity.ok(exchangeRequestService.getExchangeRequestsByAdId(adId));
+    }
+
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Create an exchange request"

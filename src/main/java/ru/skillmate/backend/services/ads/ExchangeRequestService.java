@@ -15,4 +15,6 @@ public interface ExchangeRequestService {
     List<ExchangeResponseDto> getReceivedExchangeRequests(String email);
 
     ExchangeRequestDecisionDto acceptOrDecline(Long requestId, ExchangeStatus status, String email);
+
+    List<ExchangeResponseDto> getExchangeRequestsByAdId(long adId);
 }
